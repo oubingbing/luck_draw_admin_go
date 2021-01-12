@@ -1,0 +1,11 @@
+
+/log
+/logs
+/.idea
+conf.toml
+app.conf
+adm.exe
+adm.ini
+config.json
+/project.*
+/project
