@@ -2,6 +2,11 @@ package enums
 
 import "errors"
 
+//数据库连接
+var (
+	ConnectErr		 				= errors.New("系统异常")							//数据库连接异常
+)
+
 //登录授权
 var (
 	LoginTypeErr					= errors.New("登录类型错误")
@@ -24,4 +29,9 @@ var (
 //读取配置
 var (
 	ReadConfigErr					= errors.New("配置信息错误")
+)
+
+//用户相关
+var (
+	UserPageQueryErr				= errors.New("查询失败")							//用户分页查询出错
 )

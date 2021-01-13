@@ -1,4 +1,4 @@
-package pages
+package controllers
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"

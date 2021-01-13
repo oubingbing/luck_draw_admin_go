@@ -53,4 +53,8 @@ const (
 	GIFT_GET_DETAIL_ERR				= 3003 		//礼品详情查询错误
 )
 
+//用户相关
+const (
+	USER_PAGE_QUERY_ERR				= 4000		//用户分页查询出错
+)
 

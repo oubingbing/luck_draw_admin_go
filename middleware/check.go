@@ -12,6 +12,8 @@ func CheckAuth() gin.HandlerFunc {
 		user,err := engine.User(ctx)
 		if !err {
 			util.ResponseJson(ctx ,enums.AUTH_NOT_LOGIN,enums.LoginRequestSessionErr.Error(),"")
+			ctx.Abort()
+			return
 		}
 
 		ctx.Set("user_id",user.Id)

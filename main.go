@@ -3,7 +3,9 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"luck-admin/controllers"
 	"luck-admin/route"
+	"net/http"
 	"os"
 	"os/signal"
 
@@ -17,7 +19,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"luck-admin/models"
-	"luck-admin/pages"
 	"luck-admin/tables"
 )
 
@@ -43,10 +44,11 @@ func startServer() {
 
 	models.Init(eng.MysqlConnection())
 
-	eng.HTML("GET", "/admin", pages.GetDashBoard)
-	eng.HTML("GET", "/", pages.GetDashBoard)
-	route.InitRoute(r)
+	r.StaticFS("/statics", http.Dir("./statics"))
 
+	eng.HTML("GET", "/admin", controllers.GetDashBoard)
+	eng.HTML("GET", "/", controllers.GetDashBoard)
+	route.InitRoute(r)
 
 	_ = r.Run(":80")
 

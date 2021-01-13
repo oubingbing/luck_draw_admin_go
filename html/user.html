@@ -1,12 +1,37 @@
+<link rel="stylesheet" href="../../../statics/css/element-ui-index.css">
+<link rel="stylesheet" href="../../../statics/css/app.css">
+<link rel="stylesheet" href="../../../statics/css/user.css">
 
-<div class="hello">
-    <h1>123</h1>
+<div id="app" v-cloak>
+    <el-table :data="userList" v-bind:style="{ width: '100%', height:  height+ 'px' }">
+        <el-table-column fixed prop="NickName"  label="昵称"></el-table-column>
+        <el-table-column prop="AvatarUrl"       label="头像">
+            <template slot-scope="scope">
+                <img :src="scope.row.AvatarUrl" width="40" height="40" class="head_pic"/>
+            </template></el-table-column>
+        <el-table-column prop="OpenId"          label="OpenId"></el-table-column>
+        <el-table-column prop="GenderStr"       label="性别"></el-table-column>
+        <el-table-column prop="FromTypeStr"     label="来源"></el-table-column>
+        <el-table-column prop="Language"        label="语言"></el-table-column>
+        <el-table-column prop="Country"         label="国家"></el-table-column>
+        <el-table-column prop="Province"        label="省份"></el-table-column>
+        <el-table-column prop="City"            label="城市"></el-table-column>
+        <el-table-column prop="StatusStr"       label="状态"></el-table-column>
+        <el-table-column fixed="right" label="操作" fixed>
+            <template slot-scope="scope">
+                <el-button @click.native.prevent="deleteRow(scope.$index, tableData)" type="text" size="small">
+                    拉黑
+                </el-button>
+            </template>
+        </el-table-column>
+    </el-table>
 </div>
 
-<style>
-    .hello {
-        padding: 50px;
-        width: 100%;
-        text-align: center;
-    }
-</style>
+<script src="../../../statics/js/vue.min.js"></script>
+<script src="../../../statics/js/element-ui-index.js"></script>
+<script src="../../../statics/js/axios.min.js"></script>
+<script src="../../../statics/js/user.js"></script>
+
+<script>
+    console.log(document.body.clientHeight)
+</script>
