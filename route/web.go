@@ -13,20 +13,24 @@ func InitRoute(router *gin.Engine)  {
 	//视图路由
 	view := router.Group("/admin/view")
 	{
-		//用户管理页面
+		//用户-管理页面
 		view.GET("/user",  ginAdapter.Content(controllers.UserView))
-		/*view.GET("/user1", func(context *gin.Context) {
-			context.HTML(http.StatusOK, "user.html", gin.H{
-				"title": "Users",
-			})
-		})*/
+		//礼品-管理页面
+		view.GET("/gift",  ginAdapter.Content(controllers.GiftView))
 	}
 
 	//api路由
 	api := router.Group("admin/api")
 	api.Use(middleware.CheckAuth())
 	{
+		//用户-分页
 		api.GET("/user",controllers.UserList)
+
+		//新建礼品
+		api.POST("/gift/create",controllers.CreateGift)
+
+		//cos token
+		api.GET("/cos/token",controllers.GetCosToken)
 	}
 
 }

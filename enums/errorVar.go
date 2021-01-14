@@ -5,6 +5,8 @@ import "errors"
 //数据库连接
 var (
 	ConnectErr		 				= errors.New("系统异常")							//数据库连接异常
+	CosGetTokenErr		 			= errors.New("cos获取token失败")					//cos获取token失败
+	CosCacheErr			 			= errors.New("cos缓存失败")						//cos缓存失败
 )
 
 //登录授权
@@ -35,3 +37,10 @@ var (
 var (
 	UserPageQueryErr				= errors.New("查询失败")							//用户分页查询出错
 )
+
+//礼品相关
+var (
+	GiftNotFound error = errors.New("礼品不存在")
+ 	GiftSaveErr error = errors.New("数据异常，保存失败")
+)
+

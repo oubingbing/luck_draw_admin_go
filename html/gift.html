@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="../../../statics/css/element-ui-index.css">
+<link rel="stylesheet" href="../../../statics/css/app.css">
+<link rel="stylesheet" href="../../../statics/css/gift.css">
+
+<div id="app" v-cloak>
+    <el-row>
+        <el-button @click="createGift = true" type="primary" icon="el-icon-plus">新建</el-button>
+    </el-row>
+    <el-dialog
+            title="新建礼品"
+            :visible.sync="createGift"
+            width="35%"
+            :before-close="cancelCreate">
+        <el-row>
+            <el-form ref="form" :model="gift" label-width="80px">
+                <el-form-item label="名称">
+                    <el-input v-model="gift.name"></el-input>
+                </el-form-item>
+                <el-form-item label="数量">
+                    <el-input v-model="gift.num"></el-input>
+                </el-form-item>
+                <el-form-item label="礼品类型">
+                    <el-radio-group v-model="gift.type">
+                        <el-radio :label="1">红包</el-radio>
+                        <el-radio :label="2">商品</el-radio>
+                        <el-radio :label="3">话费</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="状态">
+                    <el-radio-group v-model="gift.status">
+                        <el-radio :label="1">上架</el-radio>
+                        <el-radio :label="2">下架</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="描述">
+                    <el-input
+                            type="textarea"
+                            :rows="4"
+                            placeholder=""
+                            v-model="gift.des">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="图片上传">
+                    <el-upload
+                            class=""
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :on-preview="uploadPreview"
+                            :on-remove="uploadRemove"
+                            :file-list="gift.attachments"
+                            list-type="picture">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2M</div>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitGift">立即创建</el-button>
+                    <el-button @click="createGift = false">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-row>
+    </el-dialog>
+</div>
+
+
+<script src="../../../statics/js/vue.min.js"></script>
+<script src="../../../statics/js/element-ui-index.js"></script>
+<script src="../../../statics/js/axios.min.js"></script>
+<script src="../../../statics/js/gift.js"></script>

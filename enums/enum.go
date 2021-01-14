@@ -6,6 +6,8 @@ const (
 	FAIL 					= 1
 	DB_CONNECT_ERR 			= 2
 	READ_CONFIG_ERR			= 3
+	COS_GET_TOKEN_ERR		= 4
+	COS_CHACHE_ERR			= 5
 )
 
 //授权相关 1000 ~ 1999
