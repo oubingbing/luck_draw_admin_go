@@ -70,7 +70,7 @@ func GetCosToken() (string,*enums.ErrorInfo) {
 		util.ErrDetail(enums.COS_GET_TOKEN_ERR,err.Error(),nil)
 		return "",&enums.ErrorInfo{enums.CosGetTokenErr,enums.COS_GET_TOKEN_ERR}
 	}
-	
+
 	return res.Credentials.SessionToken,nil
 }
 

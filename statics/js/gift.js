@@ -10,16 +10,19 @@ new Vue({
         giftList:[],
         gift:{
             name:"",
-            num:0,
+            num:1,
             type:3,
             from:1,
             status:1,
             des:"",
             attachments:[]
-        }
+        },
+        cosToken:"",
+        cosDomain:""
     },
     created: function () {
-        this.getUserList()
+        this.getUserList();
+        this.getToken();
     },
     methods: {
         deleteRow(index, rows) {
@@ -35,7 +38,7 @@ new Vue({
             }).then( response=> {
                 var res = response.data;
                 if (res.code != 0){
-
+                    this.$message.error(res.msg);
                 }else{
                     let data = [];
                     //this.userList = res.data
@@ -62,6 +65,20 @@ new Vue({
         //处理上传后
         uploadRemove(e){
 
+        },
+        getToken:function (e) {
+            var url = "/admin/api/cos/token";
+            axios.get(url).then( response=> {
+                var res = response.data;
+                if (res.code != 0){
+                    this.$message.error(res.msg);
+                }else{
+                    this.cosToken = res.data.token;
+                    this.cosDomain = res.data.domain;
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
         }
     }
 })
