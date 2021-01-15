@@ -12,21 +12,21 @@
             width="35%"
             :before-close="cancelCreate">
         <el-row>
-            <el-form ref="form" :model="gift" label-width="80px">
-                <el-form-item label="名称">
+            <el-form ref="form" :rules="rules" ref="ruleForm" :model="gift" label-width="80px">
+                <el-form-item label="名称" prop="name">
                     <el-input v-model="gift.name"></el-input>
                 </el-form-item>
-                <el-form-item label="数量">
+                <el-form-item label="数量" prop="num">
                     <el-input v-model="gift.num"></el-input>
                 </el-form-item>
-                <el-form-item label="礼品类型">
+                <el-form-item label="礼品类型" prop="type">
                     <el-radio-group v-model="gift.type">
                         <el-radio :label="1">红包</el-radio>
                         <el-radio :label="2">商品</el-radio>
                         <el-radio :label="3">话费</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="状态">
+                <el-form-item label="状态" prop="status">
                     <el-radio-group v-model="gift.status">
                         <el-radio :label="1">上架</el-radio>
                         <el-radio :label="2">下架</el-radio>
@@ -40,7 +40,7 @@
                             v-model="gift.des">
                     </el-input>
                 </el-form-item>
-                <el-form-item label="图片上传">
+                <el-form-item label="图片上传" prop="attachments">
                     <el-upload
                             class=""
                             :action="cos.domain"
@@ -48,6 +48,7 @@
                             :on-remove="uploadRemove"
                             :http-request="upload"
                             :file-list="gift.attachments"
+                            limit="1"
                             list-type="picture">
                         <el-button size="small" type="primary">点击上传</el-button>
                         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2M</div>

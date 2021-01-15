@@ -48,22 +48,32 @@ type ActivityDetailFormat struct {
 
 type GiftParam struct {
 	Name 		string 		`form:"name" json:"name"`
-	Num 		float32 	`form:"num" json:"num"`
+	Num 		float64 	`form:"num" json:"num"`
 	Type 		int8   		`form:"type" json:"type"` 				//奖品类型，1=红包，2=商品，3=话费
 	FROM        int8   		`form:"from" json:"from"`   			//奖品来源，1=平台，2=用户
 	STATUS      int8   		`form:"status" json:"status"` 			//奖品状态，1=上架，2=下架，下架不可用
 	Des    		string      `form:"describe" json:"des"`
-	Attachments string  	`form:"attachment" json:"attachment"`
+	Attachments []string  	`form:"attachments" json:"attachments"`
 }
 
 type GiftDetail struct {
 	ID			uint
 	Name 		string
 	UserId 		int
-	Num 		float32
+	Num 		float64
 	Type 		int8
 	Des    		string
-	Attachments string
+	Attachments []string
+}
+
+type GiftResponse struct {
+	ID			uint
+	Name 		string
+	UserId 		int
+	Num 		float64
+	Type 		int8
+	Des    		string
+	Attachments []string
 }
 
 type UserPage struct {

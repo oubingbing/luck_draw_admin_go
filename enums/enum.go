@@ -55,6 +55,8 @@ const (
 	GIFT_FIRST_ERR					= 3001 		//礼品查询出错
 	GIFT_NOT_FOUND					= 3002 		//礼品不存在
 	GIFT_GET_DETAIL_ERR				= 3003 		//礼品详情查询错误
+	GIFT_ATTACHMENTS_ENCODE_ERR		= 3004 		//attachments encode失败
+	GIFT_ATTACHMENTS_DECODE_ERR		= 3005 		//attachments decode失败
 )
 
 //用户相关

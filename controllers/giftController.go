@@ -20,7 +20,7 @@ func GiftView(ctx *gin.Context) (types.Panel, error) {
 func CreateGift(ctx *gin.Context)  {
 	var param enums.GiftParam
 	errInfo := &enums.ErrorInfo{}
-	if errInfo.Err = ctx.ShouldBind(&param); errInfo.Err != nil {
+	if errInfo.Err = ctx.ShouldBindJSON(&param); errInfo.Err != nil {
 		util.ResponseJson(ctx,enums.ACTIVITY_PARAM_ERR,errInfo.Err.Error(),nil)
 		return
 	}
@@ -31,19 +31,20 @@ func CreateGift(ctx *gin.Context)  {
 		return
 	}
 
-	var effect int64
 	userId := 1
-	effect,errInfo = services.SaveGift(db,userId,&param)
-	if errInfo.Err != nil {
+	gift,errInfo := services.SaveGift(db,userId,&param)
+	if errInfo != nil {
 		util.ResponseJson(ctx,errInfo.Code,errInfo.Err.Error(),nil)
 		return
 	}
 
-	if effect <= 0 {
-		util.ResponseJson(ctx,enums.ACTIVITY_SAVE_ERR,enums.GiftSaveErr.Error(),nil)
+	domain,_ 	:= util.GetCosIni("cos_domain")
+	giftResp,err := services.FormatGift(gift,domain)
+	if err != nil {
+		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
 		return
 	}
 
-	util.ResponseJson(ctx,enums.SUCCESS,"",effect)
+	util.ResponseJson(ctx,enums.SUCCESS,"新建成功",giftResp)
 	return
 }

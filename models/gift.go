@@ -28,26 +28,12 @@ type Gift struct {
 	gorm.Model
 	Name 		string 		`gorm:"column:name"`
 	UserId 		int 		`gorm:"column:user_id"`
-	Num 		float32 	`gorm:"column:num"`
+	Num 		float64 	`gorm:"column:num"`
 	Type 		int8   		`gorm:"column:type"`			//奖品类型，1=红包，2=商品，3=话费
 	FROM        int8   		`gorm:"column:from"`  			//奖品来源，1=平台，2=用户
 	STATUS      int8   		`gorm:"column:status"`			//奖品状态，1=上架，2=下架，下架不可用
 	Des    		string      `gorm:"column:des"`
 	Attachments string  	`gorm:"column:attachments"`
-}
-
-//活动分页
-type ActivityPageFormat struct {
-	ID        		uint
-	Name 			string
-	GiftId 			int64
-	Type 			int8   		 	//活动类型
-	FromType 		int32   		 //发布活动的用户类型
-	JoinNum 		int32 		   	//已参加人数
-	JoinLimitNum 	float32 	 	//限制参加人数
-	//Attachments 	string
-	Status 			int8		 	//活动状态
-	Gift			*Gift
 }
 
 func (Gift) TableName() string  {

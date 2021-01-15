@@ -30,6 +30,13 @@ new Vue({
             start_time:"",
             expired_time:"",
             env:""
+        },
+        rules: {
+            name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
+            num: [{ required: true, message: '请输入数量', trigger: 'blur' }],
+            type: [{ required: true, message: '请输入数量', trigger: 'blur' }],
+            status: [{ required: true, message: '请输入数量', trigger: 'blur' }],
+            attachments: [{ required: true, message: '请输入数量', trigger: '' }],
         }
     },
     created: function () {
@@ -55,8 +62,8 @@ new Vue({
                     let data = [];
                     //this.userList = res.data
                 }
-            }).catch(function (error) {
-                console.log(error);
+            }).catch(error => {
+                this.$message.error("请求异常");
             });
         },
         cancelCreate(done) {
@@ -68,22 +75,55 @@ new Vue({
         },
         //提交数据
         submitGift(){
-            this.createGift = false
-           console.log(this.gift)
+            if (this.gift.name.length <= 0){
+                this.$message.error("名称不能为空");
+                return false
+            }
+
+            if (this.gift.num.length <= 0){
+                this.$message.error("数量不能为空");
+                return false
+            }
+
+            /*if (this.gift.attachments.length <= 0){
+                this.$message.error("图片不能为空");
+                return false
+            }*/
+
+            var url = "/admin/api/gift/create";
+            this.gift.num = parseFloat(this.gift.num);
+            this.gift.attachments = ["123123123123"]
+            axios.post(url,this.gift).then( response=> {
+                var res = response.data;
+                if (res.code != 0){
+                    this.$message.error(res.msg);
+                }else{
+                    this.$message.success(res.msg);
+                    this.createGift = false
+                }
+            }).catch(error => {
+                this.$message.error("请求异常");
+            });
         },
+        //上传图片到cos
         upload(e){
-            let fileName = this.cos.env+"/admin/"+this.todayStr+"/"+e.file.name;
+            var timestamp=new Date().getTime();
+            let fileName = this.cos.env+"/admin/"+this.todayStr+"/"+timestamp+"_"+e.file.name;
             this.cosClient.putObject({
                 Bucket: this.cos.bucket,        /* 必须 */
                 Region: this.cos.region,        /* 存储桶所在地域，必须字段 */
                 Key: fileName,                  /* 必须 */
                 StorageClass: 'STANDARD',
                 Body: e.file,                   // 上传文件对象
-                onProgress: function(progressData) {
+                onProgress: progressData=> {
                     console.log(JSON.stringify(progressData));
                 }
-            }, function(err, data) {
-                console.log(err || data);
+            }, (err, data)=> {
+                if (err == null){
+                    this.gift.attachments = [fileName]
+                }else{
+                    this.$message.error("图片上传出错");
+                }
             });
         },
         //处理上传前
@@ -92,7 +132,7 @@ new Vue({
         },
         //处理上传后
         uploadRemove(e){
-            console.log(e)
+            this.gift.attachments = []
         },
         getToken:function (e) {
             var url = "/admin/api/cos/token";
@@ -124,8 +164,8 @@ new Vue({
                         }
                     });
                 }
-            }).catch(function (error) {
-                console.log(error);
+            }).catch(error => {
+                this.$message.error("请求异常");
             });
         }
     }

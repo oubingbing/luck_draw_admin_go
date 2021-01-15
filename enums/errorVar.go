@@ -40,7 +40,9 @@ var (
 
 //礼品相关
 var (
-	GiftNotFound error = errors.New("礼品不存在")
- 	GiftSaveErr error = errors.New("数据异常，保存失败")
+	GiftNotFound error 				= errors.New("礼品不存在")
+ 	GiftSaveErr error 				= errors.New("数据异常，保存失败")
+ 	GiftAttachmentsEncodeErr error 	= errors.New("图片数据异常，保存失败")
+ 	GiftAttachmentsDecodeErr error 	= errors.New("图片数据异常")
 )
 

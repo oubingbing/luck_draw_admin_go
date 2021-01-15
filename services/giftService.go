@@ -1,15 +1,22 @@
 package services
 
 import (
+	"encoding/json"
 	"github.com/jinzhu/gorm"
 	"luck-admin/enums"
 	"luck-admin/models"
+	"luck-admin/util"
 )
 
 /**
  * 新建礼品
  */
-func SaveGift(db *gorm.DB,userId int,giftParam *enums.GiftParam) (int64,*enums.ErrorInfo) {
+func SaveGift(db *gorm.DB,userId int,giftParam *enums.GiftParam) (*models.Gift,*enums.ErrorInfo) {
+	attachmentsStr,encodeErr := json.Marshal(giftParam.Attachments)
+	if encodeErr != nil {
+		return nil,&enums.ErrorInfo{enums.GiftAttachmentsEncodeErr,enums.GIFT_ATTACHMENTS_ENCODE_ERR}
+	}
+
 	gift := &models.Gift{
 		Name:giftParam.Name,
 		Num:giftParam.Num,
@@ -18,13 +25,42 @@ func SaveGift(db *gorm.DB,userId int,giftParam *enums.GiftParam) (int64,*enums.E
 		FROM:giftParam.FROM,
 		STATUS:giftParam.STATUS,
 		Des:giftParam.Des,
-		Attachments:giftParam.Attachments,
+		Attachments:string(attachmentsStr),
 	}
 
 	effect,err := gift.Store(db)
 	if err != nil {
-		return effect,&enums.ErrorInfo{enums.GiftSaveErr,enums.GIFT_SAVE_ERR}
+		return nil,&enums.ErrorInfo{enums.GiftSaveErr,enums.GIFT_SAVE_ERR}
 	}
 
-	return effect,nil
+	if effect <= 0 {
+		return nil,&enums.ErrorInfo{enums.GiftSaveErr,enums.GIFT_SAVE_ERR}
+	}
+
+	return gift,nil
+}
+
+func FormatGift(gift *models.Gift,cosDomain string) (*enums.GiftResponse,*enums.ErrorInfo) {
+	var attachments []string
+	err := json.Unmarshal([]byte(gift.Attachments),&attachments)
+	if err != nil {
+		util.ErrDetail(enums.GIFT_ATTACHMENTS_DECODE_ERR,err.Error(),nil)
+		return nil,&enums.ErrorInfo{enums.GiftAttachmentsDecodeErr,enums.GIFT_ATTACHMENTS_DECODE_ERR}
+	}
+
+	for index,item := range attachments {
+		attachments[index] = cosDomain + "/" + item
+	}
+
+	giftRes := &enums.GiftResponse{
+		ID:          gift.ID,
+		Name:        gift.Name,
+		UserId:      gift.UserId,
+		Num:         gift.Num,
+		Type:        gift.Type,
+		Des:         gift.Des,
+		Attachments: attachments,
+	}
+
+	return giftRes,nil
 }
