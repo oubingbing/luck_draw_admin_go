@@ -57,8 +57,8 @@ func CosToken() (*CredentialMap,*enums.ErrorInfo) {
 func GetCosToken() (*CredentialMap,*enums.ErrorInfo) {
 	secretId,_ 	:= util.GetCosIni("cos_secret_id")
 	secretKey,_ := util.GetCosIni("cos_secret_key")
-	//appId,_ 	:= util.GetCosIni("cos_app_id")
-	//bucket,_ 	:= util.GetCosIni("cos_bucket")
+	appId,_ 	:= util.GetCosIni("cos_app_id")
+	bucket,_ 	:= util.GetCosIni("cos_bucket")
 	region,_ 	:= util.GetCosIni("cos_region")
 
 	c := sts.NewClient(
@@ -79,8 +79,7 @@ func GetCosToken() (*CredentialMap,*enums.ErrorInfo) {
 					Effect: "allow",
 					Resource: []string{
 						//这里改成允许的路径前缀，可以根据自己网站的用户登录态判断允许上传的具体路径，例子： a.jpg 或者 a/* 或者 * (使用通配符*存在重大安全风险, 请谨慎评估使用)
-						//"qcs::cos:" + region + ":uid/" + appId + ":" + bucket,
-						"*",
+						"qcs::cos:" + region + ":uid/" + appId + ":" + bucket+"/*",
 					},
 				},
 			},
