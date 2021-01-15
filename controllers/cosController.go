@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/gin-gonic/gin"
 	"luck-admin/enums"
 	"luck-admin/services"
@@ -15,7 +16,19 @@ func GetCosToken(ctx *gin.Context)  {
 	}
 
 	domain,_ 	:= util.GetCosIni("cos_domain")
-	mp := map[string]string{"token":token,"domain":domain}
+	bucket,_ 	:= util.GetCosIni("cos_bucket")
+	region,_ 	:= util.GetCosIni("cos_region")
+	mp := map[string]interface{}{
+		"tmp_secret_id":token.TmpSecretId,
+		"tmp_secret_key":token.TmpSecretKey,
+		"token":token.SessionToken,
+		"start_time":token.StartTime,
+		"expired_ime":token.ExpiredTime,
+		"domain":domain,
+		"bucket":bucket,
+		"region":region,
+		"env":config.GetEnv(),
+	}
 	util.ResponseJson(ctx,enums.SUCCESS,"",mp)
 	return
 }

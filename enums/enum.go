@@ -8,6 +8,8 @@ const (
 	READ_CONFIG_ERR			= 3
 	COS_GET_TOKEN_ERR		= 4
 	COS_CHACHE_ERR			= 5
+	COS_ENCODE_ERR			= 6
+	COS_DECODE_ERR			= 7
 )
 
 //授权相关 1000 ~ 1999

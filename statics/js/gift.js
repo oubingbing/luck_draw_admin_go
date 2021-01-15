@@ -1,7 +1,10 @@
 var tableHeight = document.body.clientHeight - 120;
+var date = formatDate(new Date());
 new Vue({
     el: '#app',
     data: {
+        cosClient:null,
+        todayStr:date,
         height:tableHeight,
         total:0,
         page_size:20,
@@ -17,8 +20,17 @@ new Vue({
             des:"",
             attachments:[]
         },
-        cosToken:"",
-        cosDomain:""
+        cos:{
+            token:"",
+            domain:"",
+            bucket:"",
+            region:"",
+            tmp_secret_id:"",
+            tmp_secret_key:"",
+            start_time:"",
+            expired_time:"",
+            env:""
+        }
     },
     created: function () {
         this.getUserList();
@@ -57,6 +69,22 @@ new Vue({
         //提交数据
         submitGift(){
             this.createGift = false
+           console.log(this.gift)
+        },
+        upload(e){
+            let fileName = this.cos.env+"/admin/"+this.todayStr+"/"+e.file.name;
+            this.cosClient.putObject({
+                Bucket: this.cos.bucket,        /* 必须 */
+                Region: this.cos.region,        /* 存储桶所在地域，必须字段 */
+                Key: fileName,                  /* 必须 */
+                StorageClass: 'STANDARD',
+                Body: e.file,                   // 上传文件对象
+                onProgress: function(progressData) {
+                    console.log(JSON.stringify(progressData));
+                }
+            }, function(err, data) {
+                console.log(err || data);
+            });
         },
         //处理上传前
         uploadPreview(e){
@@ -64,7 +92,7 @@ new Vue({
         },
         //处理上传后
         uploadRemove(e){
-
+            console.log(e)
         },
         getToken:function (e) {
             var url = "/admin/api/cos/token";
@@ -73,8 +101,28 @@ new Vue({
                 if (res.code != 0){
                     this.$message.error(res.msg);
                 }else{
-                    this.cosToken = res.data.token;
-                    this.cosDomain = res.data.domain;
+                    this.cos.token          = res.data.token;
+                    this.cos.domain         = res.data.domain;
+                    this.cos.bucket         = res.data.bucket;
+                    this.cos.region         = res.data.region;
+                    this.cos.tmp_secret_id  = res.data.tmp_secret_id;
+                    this.cos.tmp_secret_key = res.data.tmp_secret_key;
+                    this.cos.start_time     = res.data.start_time;
+                    this.cos.expired_time   = res.data.expired_ime;
+                    this.cos.env            = res.data.env;
+                    let cos = this.cos
+                    this.cosClient = new COS({
+                        // 必选参数
+                        getAuthorization: function (options, callback) {
+                            callback({
+                                TmpSecretId: cos.tmp_secret_id,
+                                TmpSecretKey: cos.tmp_secret_key,
+                                XCosSecurityToken: cos.token,
+                                StartTime: cos.start_time,
+                                ExpiredTime: cos.expired_time,
+                            });
+                        }
+                    });
                 }
             }).catch(function (error) {
                 console.log(error);

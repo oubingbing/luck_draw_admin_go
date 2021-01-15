@@ -43,9 +43,10 @@
                 <el-form-item label="图片上传">
                     <el-upload
                             class=""
-                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :action="cos.domain"
                             :on-preview="uploadPreview"
                             :on-remove="uploadRemove"
+                            :http-request="upload"
                             :file-list="gift.attachments"
                             list-type="picture">
                         <el-button size="small" type="primary">点击上传</el-button>
@@ -65,4 +66,6 @@
 <script src="../../../statics/js/vue.min.js"></script>
 <script src="../../../statics/js/element-ui-index.js"></script>
 <script src="../../../statics/js/axios.min.js"></script>
+<script src="../../../statics/js/cos-js-sdk-v5.min.js"></script>
+<script src="../../../statics/js/util.js"></script>
 <script src="../../../statics/js/gift.js"></script>
