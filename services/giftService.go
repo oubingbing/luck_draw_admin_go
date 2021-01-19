@@ -60,6 +60,27 @@ func FormatGift(gift *models.Gift,cosDomain string) (*enums.GiftResponse,*enums.
 		Type:        gift.Type,
 		Des:         gift.Des,
 		Attachments: attachments,
+		CreatedAt: gift.CreatedAt,
+	}
+
+	return giftRes,nil
+}
+
+func PageGift(db *gorm.DB,page *models.PageParam) ([]*enums.GiftResponse,*enums.ErrorInfo) {
+	gift := &models.Gift{}
+	result,err := gift.Page(db,page)
+	if err != nil {
+		return nil,&enums.ErrorInfo{Code:enums.GIFT_PAGE_QUERY_FAIL,Err:enums.GiftPageQueryFail}
+	}
+
+	domain,_ 	:= util.GetCosIni("cos_domain")
+	var giftRes []*enums.GiftResponse
+	for _,item := range result {
+		formatGift,formatErr := FormatGift(&item,domain)
+		if formatErr != nil {
+			return nil,formatErr
+		}
+		giftRes = append(giftRes,formatGift)
 	}
 
 	return giftRes,nil

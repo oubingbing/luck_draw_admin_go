@@ -48,3 +48,27 @@ func CreateGift(ctx *gin.Context)  {
 	util.ResponseJson(ctx,enums.SUCCESS,"新建成功",giftResp)
 	return
 }
+
+func GiftPage(ctx *gin.Context) {
+	var param models.PageParam
+	errInfo := &enums.ErrorInfo{}
+	if errInfo.Err = ctx.ShouldBind(&param); errInfo.Err != nil {
+		util.ResponseJson(ctx,enums.ACTIVITY_PARAM_ERR,errInfo.Err.Error(),nil)
+		return
+	}
+
+	db,connectErr := models.Connect()
+	if connectErr != nil {
+		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
+		return
+	}
+
+	list,err := services.PageGift(db,&param)
+	if err != nil {
+		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
+		return
+	}
+
+	util.ResponseJson(ctx,enums.SUCCESS,"ok",list)
+	return
+}

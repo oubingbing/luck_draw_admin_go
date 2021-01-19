@@ -7,7 +7,7 @@ new Vue({
         todayStr:date,
         height:tableHeight,
         total:0,
-        page_size:20,
+        page_size:10,
         current_page:1,
         createGift:false,
         giftList:[],
@@ -37,18 +37,15 @@ new Vue({
             type: [{ required: true, message: '请输入数量', trigger: 'blur' }],
             status: [{ required: true, message: '请输入数量', trigger: 'blur' }],
             attachments: [{ required: true, message: '请输入数量', trigger: '' }],
-        }
+        },
     },
     created: function () {
-        this.getUserList();
+        this.getPage();
         this.getToken();
     },
     methods: {
-        deleteRow(index, rows) {
-            rows.splice(index, 1);
-        },
-        getUserList:function (e) {
-            var url = "/admin/api/user";
+        getPage:function (e) {
+            var url = "/admin/api/gift/page";
             axios.get(url+"?page_size="+this.page_size+'&page_num='+this.current_page+'&order_by=created_at&sort=desc',{
                 page_size:this.page_size,
                 page_number:this.current_page,
@@ -60,11 +57,14 @@ new Vue({
                     this.$message.error(res.msg);
                 }else{
                     let data = [];
-                    //this.userList = res.data
+                    this.giftList = res.data
                 }
             }).catch(error => {
                 this.$message.error("请求异常");
             });
+        },
+        deleteRow(index, rows) {
+            rows.splice(index, 1);
         },
         cancelCreate(done) {
             this.$confirm('确认关闭？')
@@ -85,14 +85,13 @@ new Vue({
                 return false
             }
 
-            /*if (this.gift.attachments.length <= 0){
+            if (this.gift.attachments.length <= 0){
                 this.$message.error("图片不能为空");
                 return false
-            }*/
+            }
 
             var url = "/admin/api/gift/create";
             this.gift.num = parseFloat(this.gift.num);
-            this.gift.attachments = ["123123123123"]
             axios.post(url,this.gift).then( response=> {
                 var res = response.data;
                 if (res.code != 0){

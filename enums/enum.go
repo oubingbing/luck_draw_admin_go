@@ -57,6 +57,7 @@ const (
 	GIFT_GET_DETAIL_ERR				= 3003 		//礼品详情查询错误
 	GIFT_ATTACHMENTS_ENCODE_ERR		= 3004 		//attachments encode失败
 	GIFT_ATTACHMENTS_DECODE_ERR		= 3005 		//attachments decode失败
+	GIFT_PAGE_QUERY_FAIL			= 300 		//分页查询失败
 )
 
 //用户相关

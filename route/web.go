@@ -26,8 +26,10 @@ func InitRoute(router *gin.Engine)  {
 		//用户-分页
 		api.GET("/user",controllers.UserList)
 
-		//新建礼品
+		//礼品 - 新建
 		api.POST("/gift/create",controllers.CreateGift)
+		//礼品 - 分页
+		api.GET("/gift/page",controllers.GiftPage)
 
 		//cos token
 		api.GET("/cos/token",controllers.GetCosToken)

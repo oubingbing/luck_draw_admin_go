@@ -74,6 +74,7 @@ type GiftResponse struct {
 	Type 		int8
 	Des    		string
 	Attachments []string
+	CreatedAt   time.Time
 }
 
 type UserPage struct {
