@@ -47,6 +47,7 @@ const (
 	ACTIVITY_JOIN_SAVE_LOG_FAIL		= 2011		//参加活动失败
 	ACTIVITY_JOIN_REPEAT			= 2012		//您已参加该活动，不可重复参加
 	ACTIVITY_JOIN_QUERY_ERR			= 2013		//查询参与日志出错
+	ACTIVITY_IMAGE_ENCODE_ERR		= 2014		//活动图片转换成字符串失败
 )
 
 //礼品相关 3000 ~ 3999
@@ -57,7 +58,8 @@ const (
 	GIFT_GET_DETAIL_ERR				= 3003 		//礼品详情查询错误
 	GIFT_ATTACHMENTS_ENCODE_ERR		= 3004 		//attachments encode失败
 	GIFT_ATTACHMENTS_DECODE_ERR		= 3005 		//attachments decode失败
-	GIFT_PAGE_QUERY_FAIL			= 300 		//分页查询失败
+	GIFT_PAGE_QUERY_FAIL			= 3006		//分页查询失败
+	GIFT_FIND_ENABLE_ERR			= 3007 		//查询可用礼品出错
 )
 
 //用户相关

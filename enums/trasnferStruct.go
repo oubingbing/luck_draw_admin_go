@@ -15,16 +15,17 @@ type WxMiniLoginData struct {
 type ActivityCreateParam struct {
 	Name 			string 		`form:"name" json:"name" binding:"required"`
 	GiftId 			int64 		`form:"gift_id" json:"gift_id" binding:"required"`
-	LimitJoin 		int32 	 	`form:"limit_join" json:"limit_join" binding:"required"` 			//是否限制参加人数
+	Type 			int8 		`form:"type" json:"type" binding:"required"`						//活动类型
+	LimitJoin 		int32 	 	`form:"limit_join" json:"limit_join"` 			//是否限制参加人数
 	JoinLimitNum 	float32 	`form:"join_limit_num" json:"join_limit_num" binding:"required"` 	//限制参加人数
 	ReceiveLimit 	float32 	`form:"receive_limit" json:"receive_limit" binding:"required"` 		//每人限领数量
 	Des 			string      `form:"des" json:"des" binding:"required"`
-	Attachments 	string   	`form:"attachments" json:"attachments" binding:"required"`
+	Attachments 	[]string   	`form:"attachments" json:"attachments" binding:"required"`
 	StartAt 		string    	`form:"start_at" json:"start_at" binding:"required"`				//活动开始时间
 	EndAt 			string      `form:"end_at" json:"end_at" binding:"required"`					//活动截止时间
 	RunAt 			string      `form:"run_at" json:"run_at" binding:"required"`					//开奖时间
 	ShareTitle 		string    	`form:"share_title" json:"share_title"` 							//分享标题
-	ShareImage 		string    	`form:"share_image" json:"share_image"` 							//分享图片
+	ShareImage 		[]string    `form:"share_image" json:"share_image"` 							//分享图片
 }
 
 //活动详情返回参数

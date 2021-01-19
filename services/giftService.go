@@ -85,3 +85,27 @@ func PageGift(db *gorm.DB,page *models.PageParam) ([]*enums.GiftResponse,*enums.
 
 	return giftRes,nil
 }
+
+func FirstGiftById(db *gorm.DB,id int64) (*enums.GiftDetail,*enums.ErrorInfo) {
+	gift := &models.Gift{}
+	detail,notFound,err := gift.First(db,id)
+	if err != nil {
+		return nil,&enums.ErrorInfo{err,enums.GIFT_FIRST_ERR}
+	}
+
+	if notFound {
+		return nil,&enums.ErrorInfo{enums.GiftNotFound,enums.GIFT_NOT_FOUND}
+	}
+
+	return detail,nil
+}
+
+func FindGiftEnable(db *gorm.DB) ([]*models.GiftEnable,*enums.ErrorInfo) {
+	gift := &models.Gift{}
+	data,err := gift.FindEnable(db)
+	if err != nil {
+		return nil,&enums.ErrorInfo{Code:enums.GIFT_FIND_ENABLE_ERR,Err:enums.GiftFindEndableErr}
+	}
+
+	return data,nil
+}

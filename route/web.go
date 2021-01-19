@@ -17,6 +17,8 @@ func InitRoute(router *gin.Engine)  {
 		view.GET("/user",  ginAdapter.Content(controllers.UserView))
 		//礼品-管理页面
 		view.GET("/gift",  ginAdapter.Content(controllers.GiftView))
+		//活动-管理页面
+		view.GET("/activity",  ginAdapter.Content(controllers.ActivityView))
 	}
 
 	//api路由
@@ -30,6 +32,13 @@ func InitRoute(router *gin.Engine)  {
 		api.POST("/gift/create",controllers.CreateGift)
 		//礼品 - 分页
 		api.GET("/gift/page",controllers.GiftPage)
+		//礼品 - 可用礼品
+		api.GET("/gift/enable_list",controllers.GiftEnableList)
+
+		//活动 - 新建
+		api.POST("/activity/create",controllers.CreateActivity)
+		//活动 - 分页
+		api.GET("/activity/page",controllers.ActivityPage)
 
 		//cos token
 		api.GET("/cos/token",controllers.GetCosToken)

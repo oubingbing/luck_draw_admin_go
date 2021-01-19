@@ -45,5 +45,20 @@ var (
  	GiftAttachmentsEncodeErr error 	= errors.New("图片数据异常，保存失败")
  	GiftAttachmentsDecodeErr error 	= errors.New("图片数据异常")
  	GiftPageQueryFail error 		= errors.New("查询出错")
+ 	GiftFindEndableErr error 		= errors.New("查询可用礼品错误")
+)
+
+//活动相关
+var (
+	StartDateErr 			error 		= errors.New("活动开始日期格式错误")
+ 	EndDateErr 				error 		= errors.New("活动截止日期格式错误")
+ 	RunDateErr 				error 		= errors.New("活动开奖日期格式错误")
+ 	ActivityDetailNotFound 	error 		= errors.New("活动详情不存在")
+ 	JoinLimit 				error 		= errors.New("活动参与人数达到限制啦")
+ 	SaveJoinLogFail 		error 		= errors.New("参加活动失败")
+ 	ExistsJoinLog	 		error 		= errors.New("您已参加该活动，不可重复参加")
+ 	QueryJoinLogDbErr	 	error 		= errors.New("查询出错")
+ 	CreateLDFail 			error 		= errors.New("数据保存失败")
+ 	ActivityEncodeImageErr  error 		= errors.New("图片转化失败")
 )
 

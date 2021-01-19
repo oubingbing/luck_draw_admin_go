@@ -1,0 +1,17 @@
+input[name="file"]{
+    display: none;
+}
+
+.gift-input-item{
+    margin-bottom: 10px;
+}
+
+.gift-input-item{
+    margin-bottom: 10px;
+}
+
+.dialog-left{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}

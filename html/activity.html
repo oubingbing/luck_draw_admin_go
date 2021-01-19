@@ -1,0 +1,137 @@
+<link rel="stylesheet" href="../../../statics/css/element-ui-index.css">
+<link rel="stylesheet" href="../../../statics/css/app.css">
+<link rel="stylesheet" href="../../../statics/css/activity.css">
+
+<div id="app" v-cloak>
+    <el-row>
+        <el-button @click="createGift = true" type="primary" icon="el-icon-plus">新建</el-button>
+    </el-row>
+    <el-dialog
+            title="新建活动"
+            :visible.sync="createActivity"
+            width="70%"
+            :before-close="cancelCreate">
+        <el-row>
+            <el-form ref="form" :rules="rules" ref="ruleForm" :model="activity" label-width="20%">
+                <el-col :span="12" >
+                    <el-form-item label="活动名称" prop="name">
+                        <el-input v-model="activity.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="活动类型" prop="type">
+                        <el-radio-group v-model="activity.type">
+                            <el-radio :label="1">红包</el-radio>
+                            <el-radio :label="2">商品</el-radio>
+                            <el-radio :label="3">话费</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="礼品" prop="gift_id">
+                        <el-select v-model="activity.gift_id" placeholder="请选择礼品">
+                            <el-option v-for="item in gifts"
+                                       :key="item.ID"
+                                       :label="item.Name"
+                                       :value="item.ID">
+
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否限制人数" prop="limit_join">
+                        <el-radio-group v-model="activity.limit_join">
+                            <el-radio :label="0">是</el-radio>
+                            <el-radio :label="1">否</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="限制人数" prop="join_limit_num">
+                        <el-input v-model="activity.join_limit_num"></el-input>
+                    </el-form-item>
+                    <el-form-item label="限领领取数量" prop="receive_limit">
+                        <el-input v-model="activity.receive_limit"></el-input>
+                    </el-form-item>
+                    <el-form-item label="分享的标题" prop="share_title">
+                        <el-input v-model="activity.share_title"></el-input>
+                    </el-form-item>
+                    <el-form-item label="分享的图片" prop="share_image">
+                        <el-upload
+                                class=""
+                                :action="cos.domain"
+                                :on-preview="uploadPreview"
+                                :on-remove="uploadRemove"
+                                :http-request="upload"
+                                :data="1"
+                                :file-list="activity.attachments"
+                                limit="1"
+                                list-type="picture">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2M</div>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitActivity">立即创建</el-button>
+                        <el-button @click="createGift = false">取消</el-button>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="活动开始时间" prop="start_at">
+                        <el-date-picker
+                                v-model="activity.start_at"
+                                format="yyyy-MM-dd HH:mm:ss"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                type="datetime"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="活动截止时间" prop="end_at">
+                        <el-date-picker
+                                format="yyyy-MM-dd HH:mm:ss"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                v-model="activity.end_at"
+                                type="datetime"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="开奖时间" prop="run_at">
+                        <el-date-picker
+                                format="yyyy-MM-dd HH:mm:ss"
+                                value-format="yyyy-MM-dd HH:mm:ss"
+                                v-model="activity.run_at"
+                                type="datetime"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="活动描述">
+                        <el-input
+                                type="textarea"
+                                :rows="4"
+                                placeholder=""
+                                v-model="activity.des">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="活动图片" prop="attachments">
+                        <el-upload
+                                class=""
+                                :action="cos.domain"
+                                :on-preview="uploadPreview"
+                                :on-remove="uploadRemove"
+                                :http-request="upload"
+                                :file-list="activity.attachments"
+                                limit="1"
+                                :data="2"
+                                list-type="picture">
+                            <el-button size="small" type="primary">点击上传</el-button>
+                            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2M</div>
+                        </el-upload>
+                    </el-form-item>
+                </el-col>
+            </el-form>
+        </el-row>
+    </el-dialog>
+    <br>
+
+</div>
+
+
+<script src="../../../statics/js/vue.min.js"></script>
+<script src="../../../statics/js/element-ui-index.js"></script>
+<script src="../../../statics/js/axios.min.js"></script>
+<script src="../../../statics/js/cos-js-sdk-v5.min.js"></script>
+<script src="../../../statics/js/util.js"></script>
+<script src="../../../statics/js/activity.js"></script>

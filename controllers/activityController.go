@@ -9,47 +9,48 @@ import (
 	"luck-admin/util"
 )
 
-func GiftView(ctx *gin.Context) (types.Panel, error) {
+func ActivityView(ctx *gin.Context) (types.Panel, error) {
 	return types.Panel{
-		Title:       "礼品管理",
+		Title:       "活动管理",
 		Description: "",
-		Content:util.GetHtml("./html/gift.html"),
+		Content:util.GetHtml("./html/activity.html"),
 	}, nil
 }
 
-func CreateGift(ctx *gin.Context)  {
-	var param enums.GiftParam
+/**
+ * 新增活动
+ */
+func CreateActivity(ctx *gin.Context)  {
+	var param enums.ActivityCreateParam
 	errInfo := &enums.ErrorInfo{}
-	if errInfo.Err = ctx.ShouldBindJSON(&param); errInfo.Err != nil {
+	if errInfo.Err = ctx.ShouldBind(&param); errInfo.Err != nil {
 		util.ResponseJson(ctx,enums.ACTIVITY_PARAM_ERR,errInfo.Err.Error(),nil)
 		return
 	}
 
+	var effect int64
 	db,connectErr := models.Connect()
 	if connectErr != nil {
 		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
 		return
 	}
 
-	userId := 1
-	gift,errInfo := services.SaveGift(db,userId,&param)
-	if errInfo != nil {
+	effect,errInfo = services.SaveActivity(db,&param)
+	if errInfo.Err != nil {
 		util.ResponseJson(ctx,errInfo.Code,errInfo.Err.Error(),nil)
 		return
 	}
 
-	domain,_ 	:= util.GetCosIni("cos_domain")
-	giftResp,err := services.FormatGift(gift,domain)
-	if err != nil {
-		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
+	if effect <= 0 {
+		util.ResponseJson(ctx,enums.ACTIVITY_SAVE_ERR,enums.CreateLDFail.Error(),nil)
 		return
 	}
 
-	util.ResponseJson(ctx,enums.SUCCESS,"新建成功",giftResp)
+	util.ResponseJson(ctx,enums.SUCCESS,"创建成功",effect)
 	return
 }
 
-func GiftPage(ctx *gin.Context) {
+func ActivityPage(ctx *gin.Context)  {
 	var param models.PageParam
 	errInfo := &enums.ErrorInfo{}
 	if errInfo.Err = ctx.ShouldBind(&param); errInfo.Err != nil {
@@ -63,29 +64,38 @@ func GiftPage(ctx *gin.Context) {
 		return
 	}
 
-	list,err := services.PageGift(db,&param)
+	activities,err := services.ActivityPage(db,&param)
 	if err != nil {
 		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
 		return
 	}
 
-	util.ResponseJson(ctx,enums.SUCCESS,"ok",list)
+	util.ResponseJson(ctx,enums.SUCCESS,"",activities)
 	return
 }
 
-func GiftEnableList(ctx *gin.Context)  {
+/**
+ * 获取详情
+ */
+func GetDetail(ctx *gin.Context)  {
+	id,ok := ctx.GetQuery("id")
+	if !ok {
+		util.ResponseJson(ctx,enums.ACTIVITY_DETAIL_PARAM_ERR,"参数不能为空",nil)
+		return
+	}
+
 	db,connectErr := models.Connect()
 	if connectErr != nil {
 		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
 		return
 	}
 
-	data,err := services.FindGiftEnable(db)
+	activity,err := services.ActivityDetail(db ,id)
 	if err != nil {
 		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
 		return
 	}
 
-	util.ResponseJson(ctx,enums.SUCCESS,"ok",data)
+	util.ResponseJson(ctx,enums.SUCCESS,"",activity)
 	return
 }
