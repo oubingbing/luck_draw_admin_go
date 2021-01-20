@@ -50,7 +50,7 @@ func startServer() {
 	eng.HTML("GET", "/", controllers.GetDashBoard)
 	route.InitRoute(r)
 
-	_ = r.Run(":80")
+	_ = r.Run(":8082")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
