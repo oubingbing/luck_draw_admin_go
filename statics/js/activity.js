@@ -9,8 +9,8 @@ new Vue({
         total:0,
         page_size:10,
         current_page:1,
-        createActivity:true,
-        giftList:[],
+        createActivity:false,
+        activityList:[],
         gifts:[],
         activity:{
             name:"",
@@ -70,7 +70,7 @@ new Vue({
             });
         },
         getPage:function (e) {
-            var url = "/admin/api/gift/page";
+            var url = "/admin/api/activity/page";
             axios.get(url+"?page_size="+this.page_size+'&page_num='+this.current_page+'&order_by=created_at&sort=desc',{
                 page_size:this.page_size,
                 page_number:this.current_page,
@@ -82,7 +82,8 @@ new Vue({
                     this.$message.error(res.msg);
                 }else{
                     let data = [];
-                    this.giftList = res.data
+                    this.activityList = res.data
+                    console.log(this.activityList)
                 }
             }).catch(error => {
                 this.$message.error("请求异常");

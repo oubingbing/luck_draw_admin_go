@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/jinzhu/gorm"
 	"luck-admin/enums"
+	"time"
 )
 
 //奖品类型，1=红包，2=商品，3=话费
@@ -45,9 +46,18 @@ type ActivityPageFormat struct {
 	FromType 		int32   		 //发布活动的用户类型
 	JoinNum 		int32 		   	//已参加人数
 	JoinLimitNum 	float32 	 	//限制参加人数
-	//Attachments 	string
 	Status 			int8		 	//活动状态
 	Gift			*Gift
+	GiftName		string
+	Attachments		string
+	ShareImage		string
+	ShareTitle		string
+	LimitJoin 		int32 	 	  	//是否限制参加人数
+	ReceiveLimit 	float32 	 	//每人限领数量
+	Des 			string
+	StartAt 		time.Time    	//活动开始时间
+	EndAt 			time.Time    	//活动截止时间
+	RunAt 			time.Time    	//开奖时间
 }
 
 type GiftEnable struct {

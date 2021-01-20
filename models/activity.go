@@ -73,8 +73,8 @@ func (activity *Activity)Store(db *gorm.DB) (int64,error) {
 func (activity *Activity)Page(db *gorm.DB,page *PageParam) (AcPage,*enums.ErrorInfo) {
 	var activities AcPage
 	err :=  Page(db,activity.TableName(),page).
-			Where("status in (?)",[]int8{ACTIVITY_STATSUS_RUNNING,ACTIVITY_STATSUS_FINISH}).
-			Select("id,name,gift_id,type,from_type,join_num,join_limit_num,status").
+			Joins("left join gift on gift.id = activity.gift_id").
+			Select("activity.id,activity.name,gift_id,activity.type,share_title,share_image,run_at,activity.from_type,join_num,join_limit_num,receive_limit,activity.des,activity.attachments,start_at,end_at,activity.status,gift.name as gift_name").
 			Order("id desc").
 			Find(&activities).Error
 	if err != nil {
