@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	sts "github.com/tencentyun/qcloud-cos-sts-sdk/go"
 	"luck-admin/enums"
@@ -34,10 +33,12 @@ func CosToken() (*CredentialMap,*enums.ErrorInfo) {
 		}
 		tokenStr,err := json.Marshal(token)
 		if err != nil {
+			util.ErrDetail(enums.COS_ENCODE_ERR,enums.CosCacheErr.Error(),nil)
 			return nil,&enums.ErrorInfo{enums.CosCacheErr,enums.COS_ENCODE_ERR}
 		}
 		cacheResult := CacheCosToken(string(tokenStr))
 		if cacheResult.Err() != nil {
+			util.ErrDetail(enums.COS_CHACHE_ERR,cacheResult.Err().Error(),nil)
 			return nil,&enums.ErrorInfo{enums.CosCacheErr,enums.COS_CHACHE_ERR}
 		}
 
@@ -47,7 +48,6 @@ func CosToken() (*CredentialMap,*enums.ErrorInfo) {
 	var token CredentialMap
 	err := json.Unmarshal([]byte(result.Val()),&token)
 	if err != nil {
-		fmt.Println(err)
 		return nil,&enums.ErrorInfo{enums.CosCacheErr,enums.COS_DECODE_ERR}
 	}
 
