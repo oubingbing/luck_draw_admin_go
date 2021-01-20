@@ -40,7 +40,7 @@ func Error(info string)  {
 
 func getFile() (*os.File,error) {
 	log.Out = os.Stdout
-	logDirPath := "./logs"
+	logDirPath := "./log"
 
 	if !isExistDir(logDirPath){
 		mkdirErr := os.Mkdir("./log",0777)
