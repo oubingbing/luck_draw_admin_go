@@ -119,7 +119,7 @@ new Vue({
                 }
             }, (err, data)=> {
                 if (err == null){
-                    this.gift.attachments = [fileName]
+                    this.gift.attachments.push(fileName)
                 }else{
                     this.$message.error("图片上传出错");
                 }
@@ -131,6 +131,7 @@ new Vue({
         },
         //处理上传后
         uploadRemove(e){
+            console.log(e)
             this.gift.attachments = []
         },
         getToken:function (e) {

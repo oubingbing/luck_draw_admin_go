@@ -30,6 +30,7 @@ func CreateActivity(ctx *gin.Context)  {
 
 	var effect int64
 	db,connectErr := models.Connect()
+	defer db.Close()
 	if connectErr != nil {
 		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
 		return
@@ -59,6 +60,7 @@ func ActivityPage(ctx *gin.Context)  {
 	}
 
 	db,connectErr := models.Connect()
+	defer db.Close()
 	if connectErr != nil {
 		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
 		return
@@ -85,6 +87,7 @@ func GetDetail(ctx *gin.Context)  {
 	}
 
 	db,connectErr := models.Connect()
+	defer db.Close()
 	if connectErr != nil {
 		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
 		return

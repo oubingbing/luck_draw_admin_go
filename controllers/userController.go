@@ -27,6 +27,7 @@ func UserList(ctx *gin.Context)  {
 	}
 
 	orm,err := models.Connect()
+	defer orm.Close()
 	if err != nil {
 		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
 		return
