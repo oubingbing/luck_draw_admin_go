@@ -106,5 +106,9 @@ func GetCosToken() (*CredentialMap,*enums.ErrorInfo) {
 
 func CacheCosToken(token string) *redis.StatusCmd {
 	result := redisClient.SetEX(ctx,COS_TOKEN,token,time.Hour)
+	util.Info(result.Val())
+	if result.Err() != nil {
+		util.Info(result.Err().Error())
+	}
 	return result
 }
