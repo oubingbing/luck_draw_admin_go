@@ -10,6 +10,7 @@ import (
 
 func GetCosToken(ctx *gin.Context)  {
 	token,err := services.CosToken()
+	util.Info(token.SessionToken)
 	if err != nil {
 		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
 		return

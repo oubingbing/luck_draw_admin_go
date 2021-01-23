@@ -27,7 +27,9 @@ type CredentialMap struct {
 
 func CosToken() (*CredentialMap,*enums.ErrorInfo) {
 	result := redisClient.Get(ctx,COS_TOKEN)
+	util.Info("cos缓存："+result.Val())
 	if len(result.Val()) <= 0 {
+		util.Info("无数据：")
 		token,errInfo := GetCosToken()
 		if errInfo != nil {
 			return nil,errInfo
@@ -53,6 +55,7 @@ func CosToken() (*CredentialMap,*enums.ErrorInfo) {
 	var token CredentialMap
 	err := json.Unmarshal([]byte(result.Val()),&token)
 	if err != nil {
+		util.Info("解析缓存失败：")
 		return nil,&enums.ErrorInfo{enums.CosCacheErr,enums.COS_DECODE_ERR}
 	}
 
