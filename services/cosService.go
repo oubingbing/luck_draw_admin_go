@@ -32,12 +32,15 @@ func CosToken() (*CredentialMap,*enums.ErrorInfo) {
 		if errInfo != nil {
 			return nil,errInfo
 		}
+		util.Info(token.SessionToken)
 		tokenStr,err := json.Marshal(token)
 		if err != nil {
+			util.Info("token转成字符串失败")
 			util.ErrDetail(enums.COS_ENCODE_ERR,enums.CosCacheErr.Error(),nil)
 			return nil,&enums.ErrorInfo{enums.CosCacheErr,enums.COS_ENCODE_ERR}
 		}
 		cacheResult := CacheCosToken(string(tokenStr))
+		util.Info(fmt.Sprintf("数：%v\n",cacheResult))
 		if cacheResult.Err() != nil {
 			fmt.Println(cacheResult)
 			util.ErrDetail(enums.COS_CHACHE_ERR,cacheResult.Err().Error(),nil)
