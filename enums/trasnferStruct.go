@@ -16,7 +16,8 @@ type ActivityCreateParam struct {
 	Name 			string 		`form:"name" json:"name" binding:"required"`
 	GiftId 			int64 		`form:"gift_id" json:"gift_id" binding:"required"`
 	Type 			int8 		`form:"type" json:"type" binding:"required"`						//活动类型
-	LimitJoin 		int32 	 	`form:"limit_join" json:"limit_join"` 			//是否限制参加人数
+	OpenAd 			int8 		`form:"open_ad" json:"open_ad"`										//活动类型
+	LimitJoin 		int32 	 	`form:"limit_join" json:"limit_join"` 								//是否限制参加人数
 	JoinLimitNum 	float32 	`form:"join_limit_num" json:"join_limit_num" binding:"required"` 	//限制参加人数
 	ReceiveLimit 	float32 	`form:"receive_limit" json:"receive_limit" binding:"required"` 		//每人限领数量
 	Des 			string      `form:"des" json:"des" binding:"required"`

@@ -23,6 +23,7 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 		Name:param.Name,
 		GiftId:param.GiftId,
 		Type:param.Type,
+		OpenAd:param.OpenAd,
 		FromType:model.ACTIVITY_FROM_USER,
 		LimitJoin:param.LimitJoin,
 		JoinLimitNum:param.JoinLimitNum,

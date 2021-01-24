@@ -40,6 +40,12 @@
                             <el-radio :label="1">否</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="是否开启广告" prop="open_ad">
+                        <el-radio-group v-model="activity.open_ad">
+                            <el-radio :label="1">是</el-radio>
+                            <el-radio :label="0">否</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="限制人数" prop="join_limit_num">
                         <el-input v-model="activity.join_limit_num"></el-input>
                     </el-form-item>

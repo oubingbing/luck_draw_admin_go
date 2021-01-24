@@ -41,7 +41,8 @@ type Activity struct {
 	Name 			string 		`gorm:"column:name"`
 	GiftId 			int64 		`gorm:"column:gift_id"`
 	Type 			int8   		`gorm:"column:type"` 			//活动类型
-	FromType 		int8   		`gorm:"column:from_type"` 			//发布活动的用户类型
+	OpenAd 			int8   		`gorm:"column:open_ad"` 		//是否开启广告
+	FromType 		int8   		`gorm:"column:from_type"` 		//发布活动的用户类型
 	JoinNum 		int32 		`gorm:"column:join_num"`   		//已参加人数
 	LimitJoin 		int32 	 	`gorm:"column:limit_join"`  	//是否限制参加人数
 	JoinLimitNum 	float32 	`gorm:"column:join_limit_num"` 	//限制参加人数
