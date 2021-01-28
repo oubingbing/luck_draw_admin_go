@@ -217,3 +217,43 @@ func AppendDomain(domain,str string) ([]string,*enums.ErrorInfo) {
 
 	return sli,nil
 }
+
+func ActivityUpdate(db *gorm.DB,param *enums.ActivityCreateParam) (*model.ActivityPageFormat,*enums.ErrorInfo) {
+	attachments,encodeErr := json.Marshal(param.Attachments)
+	if encodeErr != nil {
+		return nil,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
+	}
+
+	var shareImage []byte
+	if len(param.ShareImage) > 0 {
+		shareImage,encodeErr = json.Marshal(param.ShareImage)
+		if encodeErr != nil {
+			return nil,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
+		}
+	}
+
+	activity := &model.Activity{
+		Name:param.Name,
+		GiftId:param.GiftId,
+		Type:param.Type,
+		OpenAd:param.OpenAd,
+		FromType:model.ACTIVITY_FROM_USER,
+		LimitJoin:param.LimitJoin,
+		JoinLimitNum:param.JoinLimitNum,
+		ReceiveLimit:param.ReceiveLimit,
+		Des:param.Des,
+		Attachments:string(attachments),
+		ShareTitle:param.ShareTitle,
+		ShareImage:string(shareImage),
+		Status:model.ACTIVITY_STATSUS_TO_RELE,
+		Really:param.Really,
+		DrawType:param.DrawType,
+		BigPic:param.BigPic,
+	}
+
+	_,err := FirstGiftById(db,activity.GiftId)
+	if err != nil {
+		return nil,err
+	}
+
+}

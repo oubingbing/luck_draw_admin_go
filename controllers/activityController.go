@@ -171,4 +171,12 @@ func UpdateActivity(ctx *gin.Context)  {
 		util.ResponseJson(ctx,enums.ACTIVITY_PARAM_ERR,errInfo.Err.Error(),nil)
 		return
 	}
+
+	var effect int64
+	db,connectErr := models.Connect()
+	defer db.Close()
+	if connectErr != nil {
+		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
+		return
+	}
 }
