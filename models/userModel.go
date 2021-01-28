@@ -20,6 +20,11 @@ const (
 	USER_STATUS_BLACK		= 2		//拉黑
 )
 
+const (
+	FAKER_N 						= 0		//真用户
+	FAKER_Y 						= 1		//假用户
+)
+
 type UserPage []*enums.UserPage
 
 type User struct {
@@ -35,6 +40,8 @@ type User struct {
 	Province		string		`gorm:"column:province"`
 	FromType		int8		`gorm:"column:from_type"`		//用户来源,1=小程序，2=h5公众号
 	Status			int8		`gorm:"column:status"`			//状态，1=正常，2=拉黑
+	Phone			string		`gorm:"column:phone"`
+	Faker			int8		`gorm:"column:faker"`
 }
 
 func (User) TableName() string  {

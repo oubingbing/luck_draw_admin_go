@@ -21,11 +21,28 @@ new Vue({
             receive_limit:1,
             des:"",
             attachments:[],
-            start_at:"",
-            end_at:"",
-            run_at:"",
             share_title:"",
             share_image:"",
+            big_pic:2,
+            draw_type:1,
+            really:0,
+            open_ad:1
+        },
+        initActivity: {
+            name:"",
+            type:3,
+            gift_id:0,
+            limit_join:0,
+            join_limit_num:1,
+            receive_limit:1,
+            des:"",
+            attachments:[],
+            share_title:"",
+            share_image:"",
+            big_pic:2,
+            draw_type:1,
+            really:0,
+            open_ad:1
         },
         cos:{
             token:"",
@@ -42,8 +59,11 @@ new Vue({
             name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
             num: [{ required: true, message: '请输入数量', trigger: 'blur' }],
             type: [{ required: true, message: '请输入数量', trigger: 'blur' }],
+            gift_id: [{ required: true, message: '请选择奖品', trigger: 'blur' }],
             status: [{ required: true, message: '请输入数量', trigger: 'blur' }],
-            attachments: [{ required: true, message: '请输入数量', trigger: '' }],
+            join_limit_num: [{ required: true, message: '请输入限制参与人数', trigger: '' }],
+            receive_limit: [{ required: true, message: '请输入限领数量', trigger: '' }],
+            attachments: [{ required: true, message: '请上传活动图片', trigger: '' }],
         },
     },
     created: function () {
@@ -52,6 +72,53 @@ new Vue({
         this.getGifts();
     },
     methods: {
+        update:function(id,status){
+
+        },
+        //上架活动
+        upActivity:function(id,status){
+            var url = "/admin/api/activity/update_status";
+            axios.put(url,{id:id,status:status}).then( response=> {
+                var res = response.data;
+                if (res.code != 0){
+                    this.$message.error(res.msg);
+                }else{
+                    this.$message.success(res.msg);
+                    let activityList = this.activityList
+                    activityList = activityList.map(item=>{
+                        if (item.ID == id){
+                            item.Status = status
+                        }
+                        return item
+                    })
+                    this.activityList = activityList
+                }
+            }).catch(error => {
+                this.$message.error("请求异常");
+            });
+        },
+        //下架活动
+        downActivity:function(id,status){
+            var url = "/admin/api/activity/update_status";
+            axios.put(url,{id:id,status:status}).then( response=> {
+                var res = response.data;
+                if (res.code != 0){
+                    this.$message.error(res.msg);
+                }else{
+                    this.$message.success(res.msg);
+                    let activityList = this.activityList
+                    activityList = activityList.map(item=>{
+                        if (item.ID == id){
+                            item.Status = status
+                        }
+                        return item
+                    })
+                    this.activityList = activityList
+                }
+            }).catch(error => {
+                this.$message.error("请求异常");
+            });
+        },
         getGifts:function (e) {
             var url = "/admin/api/gift/enable_list";
             axios.get(url,{}).then( response=> {
@@ -83,14 +150,26 @@ new Vue({
                 }else{
                     let data = [];
                     this.activityList = res.data
-                    console.log(this.activityList)
                 }
             }).catch(error => {
                 this.$message.error("请求异常");
             });
         },
         deleteRow(index, rows) {
-            rows.splice(index, 1);
+            let data = this.activityList[index];
+            var url = "/admin/api/activity/delete";
+            axios.delete(url,{data:{id:data.ID}}).then( response=> {
+                var res = response.data;
+                if (res.code != 0){
+                    this.$message.error(res.msg);
+                }else{
+                    rows.splice(index, 1);
+                    this.activityList = rows;
+                    this.$message.success(res.msg);
+                }
+            }).catch(error => {
+                this.$message.error("请求异常");
+            });
         },
         cancelCreate(done) {
             this.$confirm('确认关闭？')
@@ -103,13 +182,46 @@ new Vue({
         submitActivity(){
             var url = "/admin/api/activity/create";
             this.activity.join_limit_num = parseFloat(this.activity.join_limit_num);
+            if (this.activity.name == ""){
+                this.$message.error("活动名称不能为空");
+                return false
+            }
+
+            if (this.activity.gift_id <= 0){
+                this.$message.error("请选择奖品");
+                return false
+            }
+
+            if (this.activity.join_limit_num <= 0){
+                this.$message.error("限制人数不能为空或者小于等于0");
+                return false
+            }
+
+            if (this.activity.receive_limit <= 0){
+                this.$message.error("限领取人数不能为空或者小于等于0");
+                return false
+            }
+
+            if (this.activity.attachments.length <= 0){
+                this.$message.error("活动图片不能为空");
+                return false
+            }
+
+            if (this.activity.share_image.length <= 0){
+                this.activity.share_image = [""]
+            }
+
             axios.post(url,this.activity).then( response=> {
                 var res = response.data;
                 if (res.code != 0){
                     this.$message.error(res.msg);
                 }else{
                     this.$message.success(res.msg);
-                    this.createGift = false
+                    this.createActivity = false;
+                    this.activity = this.initActivity
+                    this.current_page = 1
+                    this.activityList = []
+                    this.getPage()
                 }
             }).catch(error => {
                 this.$message.error("请求异常");

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"luck-admin/enums"
-	"time"
 )
 
 //活动类型，1=红包，2=商品，3=话费
@@ -36,6 +35,31 @@ const (
 
 )
 
+//抽奖方式，1=平均，2=拼手气，拼手气人人有份
+const (
+	ACTIVITY_DRAW_TYPE_AVERAGE  = 1
+	ACTIVITY_DRAW_TYPE_RAND     = 2
+	ACTIVITY_DRAW_TYPE_RAND_all = 3
+)
+
+//是否真的送奖品，0=否，1=是 really
+const (
+	ACTIVITY_REALLY_N 			= 0
+	ACTIVITY_REALLY_Y 			= 1
+)
+
+//是否大图，1=大图，2=小图
+const (
+	ACTIVITY_BIG_PIC_BIG		= 1
+	ACTIVITY_BIG_PIC_SMALL		= 2
+)
+
+//是否开启广告,是否开启广告，0=否，1=是
+const (
+	ACTIVITY_OP_AD_Y 			= 1
+	ACTIVITY_OP_AD_N 			= 0
+)
+
 type Activity struct {
 	gorm.Model
 	Name 			string 		`gorm:"column:name"`
@@ -49,12 +73,13 @@ type Activity struct {
 	ReceiveLimit 	float32 	`gorm:"column:receive_limit"` 	//每人限领数量
 	Des 			string      `gorm:"column:des"`
 	Attachments 	string   	`gorm:"column:attachments"`
-	StartAt 		time.Time   `gorm:"column:start_at"` 		//活动开始时间
-	EndAt 			time.Time   `gorm:"column:end_at"` 			//活动截止时间
-	RunAt 			time.Time   `gorm:"column:run_at"` 			//开奖时间
 	Status 			int8		`gorm:"column:status"` 			//活动状态
 	ShareTitle 		string    	`gorm:"column:share_title"` 	//分享标题
 	ShareImage 		string    	`gorm:"column:share_image"` 	//分享图片
+	DrawType 		int8    	`gorm:"column:draw_type"`
+	Really 			int8    	`gorm:"column:really"`
+	Consume			float32		`gorm:"column:consume"`
+	BigPic 			int8    	`gorm:"column:big_pic"`
 }
 
 
@@ -74,8 +99,9 @@ func (activity *Activity)Store(db *gorm.DB) (int64,error) {
 func (activity *Activity)Page(db *gorm.DB,page *PageParam) (AcPage,*enums.ErrorInfo) {
 	var activities AcPage
 	err :=  Page(db,activity.TableName(),page).
+			Where("activity.deleted_at is null").
 			Joins("left join gift on gift.id = activity.gift_id").
-			Select("activity.id,activity.name,gift_id,activity.type,share_title,share_image,run_at,activity.from_type,join_num,join_limit_num,receive_limit,activity.des,activity.attachments,start_at,end_at,activity.status,gift.name as gift_name").
+			Select("activity.id,activity.name,gift_id,activity.type,share_title,share_image,activity.from_type,join_num,join_limit_num,receive_limit,activity.des,activity.attachments,activity.status,gift.name as gift_name,big_pic,draw_type,really").
 			Order("id desc").
 			Find(&activities).Error
 	if err != nil {
@@ -91,6 +117,7 @@ func (activity *Activity) Detail(db *gorm.DB,id string) (*enums.ActivityDetailFo
 	err := db.Table(activity.TableName()).
 		Select("id,name,gift_id,type,from_type,join_num,limit_join,join_limit_num,des,attachments,share_title,share_image,created_at").
 		Where("id = ?",id).
+		Where("deleted_at is null").
 		First(activityDetail).Error
 	return activityDetail,db.RecordNotFound(),err
 }
@@ -99,7 +126,35 @@ func (activity *Activity)LockById(db *gorm.DB,id string) (bool,error) {
 	err := db.Table(activity.TableName()).
 		Set("gorm:query_option", "FOR UPDATE").
 		Where("id = ?",id).
+		Where("deleted_at is null").
 		First(activity).Error
 
 	return db.RecordNotFound(),err
+}
+
+func (activity *Activity)Delete(db *gorm.DB) error {
+	err := db.Delete(activity).Error
+	return err
+}
+
+func (activity *Activity) Up(db *gorm.DB,id interface{}) error {
+	update := map[string]interface{}{
+		"status":ACTIVITY_STATSUS_RUNNING,
+	}
+	err := db.Table(activity.TableName()).
+		Where("id = ?",id).
+		Where("deleted_at is null").
+		Update(update).Error
+	return err
+}
+
+func (activity *Activity) Down(db *gorm.DB,id interface{}) error {
+	update := map[string]interface{}{
+		"status":ACTIVITY_STATSUS_DOWN,
+	}
+	err := db.Table(activity.TableName()).
+		Where("id = ?",id).
+		Where("deleted_at is null").
+		Update(update).Error
+	return err
 }

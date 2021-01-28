@@ -2,11 +2,10 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	"luck-admin/enums"
 	model "luck-admin/models"
-	"time"
+	"luck-admin/util"
 )
 
 func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.ErrorInfo) {
@@ -14,9 +13,13 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 	if encodeErr != nil {
 		return 0,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
 	}
-	shareImage,encodeErr := json.Marshal(param.ShareImage)
-	if encodeErr != nil {
-		return 0,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
+
+	var shareImage []byte
+	if len(param.ShareImage) > 0 {
+		shareImage,encodeErr = json.Marshal(param.ShareImage)
+		if encodeErr != nil {
+			return 0,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
+		}
 	}
 
 	activity := &model.Activity{
@@ -33,25 +36,9 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 		ShareTitle:param.ShareTitle,
 		ShareImage:string(shareImage),
 		Status:model.ACTIVITY_STATSUS_TO_RELE,
-	}
-
-	var parseErr error
-	activity.StartAt,parseErr = time.Parse("2006-01-02 15:04:05",param.StartAt)
-	if parseErr != nil {
-		fmt.Println(parseErr.Error())
-		return 0,&enums.ErrorInfo{enums.StartDateErr,enums.ACTIVITY_START_DATE_ERR}
-	}
-
-	activity.EndAt,parseErr = time.Parse("2006-01-02 15:04:05",param.EndAt)
-	if parseErr != nil {
-		fmt.Println(parseErr.Error())
-		return 0,&enums.ErrorInfo{enums.EndDateErr,enums.ACTIVITY_END_DATE_ERR}
-	}
-
-	activity.RunAt,parseErr = time.Parse("2006-01-02 15:04:05",param.RunAt)
-	if parseErr != nil {
-		fmt.Println(parseErr.Error())
-		return 0,&enums.ErrorInfo{enums.RunDateErr,enums.ACTIVITY_RUN_DATE_ERR}
+		Really:param.Really,
+		DrawType:param.DrawType,
+		BigPic:param.BigPic,
 	}
 
 	_,err := FirstGiftById(db,activity.GiftId)
@@ -70,7 +57,80 @@ func ActivityPage(db *gorm.DB,page *model.PageParam) (model.AcPage,*enums.ErrorI
 		return nil,err
 	}
 
+	domain,_ 	:= util.GetCosIni("cos_domain")
+	for index,_:= range activities {
+		 ActivityFormat(domain,&activities[index])
+	}
+
 	return activities,nil
+}
+
+func ActivityFormat(domain string,activity *model.ActivityPageFormat)  {
+	activity.AttachmentsStr,_ = AppendDomain(domain,activity.Attachments)
+	activity.ShareImageStr,_  = AppendDomain(domain,activity.ShareImage)
+
+	switch int(activity.Status) {
+		case model.ACTIVITY_STATSUS_TO_RELE:
+			activity.StatusStr = "待上架"
+			break
+		case model.ACTIVITY_STATSUS_RUNNING:
+			activity.StatusStr = "进行中"
+			break
+		case model.ACTIVITY_STATSUS_DOWN:
+			activity.StatusStr = "已下架"
+			break
+		case model.ACTIVITY_STATSUS_FINISH:
+			activity.StatusStr = "已结束"
+			break
+		default:
+			activity.StatusStr = "未知状态"
+	}
+
+	switch int(activity.Type) {
+		case model.ACTIVITY_TYPE_RED_PAK:
+			activity.TypeStr = "红包"
+			break
+		case model.ACTIVITY_TYPE_GOODS:
+			activity.TypeStr = "礼品"
+			break
+		case model.ACTIVITY_TYPE_PHONE_BILL:
+			activity.TypeStr = "话费"
+			break
+		default:
+			activity.TypeStr = "未知"
+	}
+
+	switch int(activity.DrawType) {
+	case model.ACTIVITY_DRAW_TYPE_AVERAGE:
+		activity.DrawTypeStr = "平均"
+		break
+	case model.ACTIVITY_DRAW_TYPE_RAND:
+		activity.DrawTypeStr = "拼手气"
+		break
+	case model.ACTIVITY_DRAW_TYPE_RAND_all:
+		activity.DrawTypeStr = "拼手气人人有份"
+		break
+	default:
+		activity.TypeStr = "未知"
+	}
+
+	if int(activity.OpenAd) == model.ACTIVITY_OP_AD_Y {
+		activity.OpenAdStr = "已开启广告"
+	}else{
+		activity.OpenAdStr = "广告关闭"
+	}
+
+	if int(activity.Really) == model.ACTIVITY_REALLY_N {
+		activity.ReallyStr = "真送"
+	}else{
+		activity.ReallyStr = "假送"
+	}
+
+	if int(activity.BigPic) == model.ACTIVITY_BIG_PIC_BIG {
+		activity.BigPicStr = "大图"
+	}else{
+		activity.BigPicStr = "小图"
+	}
 }
 
 func ActivityDetail(db *gorm.DB,id string) (*enums.ActivityDetailFormat,*enums.ErrorInfo) {
@@ -95,4 +155,65 @@ func ActivityDetail(db *gorm.DB,id string) (*enums.ActivityDetailFormat,*enums.E
 	detail.Gift = giftDetail
 
 	return detail,nil
+}
+
+func ActivityDelete(db *gorm.DB,id uint) *enums.ErrorInfo {
+	activity := &model.Activity{}
+	activity.ID = id
+	err := activity.Delete(db)
+	if err != nil {
+		return &enums.ErrorInfo{enums.ActivityDeleteErr,enums.ACTIVITY_DELETE_ERR}
+	}
+
+	joinLog := &model.JoinLog{}
+	err = joinLog.DeleteByAid(db,id)
+	if err != nil {
+		return &enums.ErrorInfo{enums.ActivityDeleteErr,enums.ACTIVITY_DELETE_ERR}
+	}
+
+	return nil
+}
+
+func ActivityUpdateStatus(db *gorm.DB,id interface{},status interface{}) *enums.ErrorInfo {
+	var err error
+	activity := &model.Activity{}
+
+	if status.(float64) == float64(model.ACTIVITY_STATSUS_RUNNING) {
+		//上架
+		err = activity.Up(db,id)
+	}else if status.(float64) == float64(model.ACTIVITY_STATSUS_DOWN) {
+		//下架
+		err = activity.Down(db,id)
+	}else{
+		return &enums.ErrorInfo{enums.ActivityUpdateStatusErr,enums.ACTIVITY_UPDATE_STATUS_ERR}
+	}
+
+	if err != nil {
+		return &enums.ErrorInfo{enums.ActivityUpdateStatusErr,enums.ACTIVITY_UPDATE_STATUS_BAD_ERR}
+	}
+
+	return nil
+}
+
+func StrToArr(str string) ([]string,*enums.ErrorInfo) {
+	var sli []string
+	err := json.Unmarshal([]byte(str),&sli)
+	if err != nil {
+		return nil,&enums.ErrorInfo{enums.DecodeErr,enums.DECODE_ARR_ERR}
+	}
+
+	return sli,nil
+}
+
+func AppendDomain(domain,str string) ([]string,*enums.ErrorInfo) {
+	sli,err := StrToArr(str)
+	if err != nil {
+		return nil,err
+	}
+
+	for index,_ := range sli {
+		sli[index] = domain+"/"+sli[index]
+	}
+
+	return sli,nil
 }

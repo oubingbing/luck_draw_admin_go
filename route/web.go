@@ -39,6 +39,10 @@ func InitRoute(router *gin.Engine)  {
 		api.POST("/activity/create",controllers.CreateActivity)
 		//活动 - 分页
 		api.GET("/activity/page",controllers.ActivityPage)
+		//活动 - 删除
+		api.DELETE("/activity/delete",controllers.DeleteActivity)
+		//活动 - 更新状态
+		api.PUT("/activity/update_status",controllers.ChangeActivityStatus)
 
 		//cos token
 		api.GET("/cos/token",controllers.GetCosToken)

@@ -10,6 +10,7 @@ const (
 	COS_CHACHE_ERR			= 5
 	COS_ENCODE_ERR			= 6
 	COS_DECODE_ERR			= 7
+	DECODE_ARR_ERR			= 8
 )
 
 //授权相关 1000 ~ 1999
@@ -48,6 +49,9 @@ const (
 	ACTIVITY_JOIN_REPEAT			= 2012		//您已参加该活动，不可重复参加
 	ACTIVITY_JOIN_QUERY_ERR			= 2013		//查询参与日志出错
 	ACTIVITY_IMAGE_ENCODE_ERR		= 2014		//活动图片转换成字符串失败
+	ACTIVITY_DELETE_ERR				= 2015		//活动删除失败
+	ACTIVITY_UPDATE_STATUS_ERR		= 2016		//活动状态更新错误
+	ACTIVITY_UPDATE_STATUS_BAD_ERR	= 2017		//活动状态更新状态不允许修改
 )
 
 //礼品相关 3000 ~ 3999

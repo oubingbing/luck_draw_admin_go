@@ -60,5 +60,12 @@ var (
  	QueryJoinLogDbErr	 	error 		= errors.New("查询出错")
  	CreateLDFail 			error 		= errors.New("数据保存失败")
  	ActivityEncodeImageErr  error 		= errors.New("图片转化失败")
+ 	ActivityDeleteErr					= errors.New("活动删除失败")
+ 	ActivityUpdateStatusErr				= errors.New("活动状态更新错误")
 )
 
+//公共错误
+var (
+	DecodeErr						= errors.New("数据解析失败")
+	SystemErr						= errors.New("系统异常")
+)
