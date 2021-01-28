@@ -172,11 +172,22 @@ func UpdateActivity(ctx *gin.Context)  {
 		return
 	}
 
-	var effect int64
 	db,connectErr := models.Connect()
 	defer db.Close()
 	if connectErr != nil {
 		util.ResponseJson(ctx,connectErr.Code,connectErr.Err.Error(),nil)
 		return
 	}
+
+	activity,err := services.ActivityUpdate(db,&param)
+	if err != nil {
+		util.ResponseJson(ctx,err.Code,err.Err.Error(),nil)
+		return
+	}
+
+	domain,_ 	:= util.GetCosIni("cos_domain")
+	services.ActivityFormat(domain,activity)
+
+	util.ResponseJson(ctx,enums.SUCCESS,"编辑成功",activity)
+	return
 }

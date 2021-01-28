@@ -43,6 +43,8 @@ func InitRoute(router *gin.Engine)  {
 		api.DELETE("/activity/delete",controllers.DeleteActivity)
 		//活动 - 更新状态
 		api.PUT("/activity/update_status",controllers.ChangeActivityStatus)
+		//活动 - 更新
+		api.PUT("/activity/update",controllers.UpdateActivity)
 
 		//cos token
 		api.GET("/cos/token",controllers.GetCosToken)

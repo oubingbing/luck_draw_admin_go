@@ -218,42 +218,70 @@ func AppendDomain(domain,str string) ([]string,*enums.ErrorInfo) {
 	return sli,nil
 }
 
-func ActivityUpdate(db *gorm.DB,param *enums.ActivityCreateParam) (*model.ActivityPageFormat,*enums.ErrorInfo) {
-	attachments,encodeErr := json.Marshal(param.Attachments)
-	if encodeErr != nil {
-		return nil,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
+func ActivityUpdate(db *gorm.DB,param *enums.ActivityUpdateParam) (*model.ActivityPageFormat,*enums.ErrorInfo) {
+	activity := &model.Activity{}
+	err := activity.FindById(db,param.Id)
+	if err != nil {
+		return nil,&enums.ErrorInfo{enums.ActivityDetailNotFound,enums.ACTIVITY_NOT_FOUND}
 	}
 
-	var shareImage []byte
+	_,findGiftErr := FirstGiftById(db,activity.GiftId)
+	if findGiftErr != nil {
+		return nil,&enums.ErrorInfo{Code:enums.GIFT_GET_DETAIL_ERR,Err:enums.GiftNotFound}
+	}
+
+	/*attachments,encodeErr := json.Marshal(param.Attachments)
+	if encodeErr != nil {
+		return nil,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
+	}*/
+
+	/*var shareImage []byte
 	if len(param.ShareImage) > 0 {
 		shareImage,encodeErr = json.Marshal(param.ShareImage)
 		if encodeErr != nil {
 			return nil,&enums.ErrorInfo{Code:enums.ACTIVITY_IMAGE_ENCODE_ERR,Err:enums.ActivityEncodeImageErr}
 		}
+	}*/
+
+	activity.Name = param.Name
+	activity.GiftId = param.GiftId
+	activity.Type = param.Type
+	activity.OpenAd = param.OpenAd
+	activity.FromType = model.ACTIVITY_FROM_USER
+	activity.LimitJoin = param.LimitJoin
+	activity.JoinLimitNum = param.JoinLimitNum
+	activity.ReceiveLimit = param.ReceiveLimit
+	activity.Des = param.Des
+	activity.Attachments = param.Attachments
+	activity.ShareTitle = param.ShareTitle
+	activity.ShareImage = param.ShareImage
+	activity.Status = model.ACTIVITY_STATSUS_TO_RELE
+	activity.Really = param.Really
+	activity.DrawType = param.DrawType
+	activity.BigPic = param.BigPic
+	saveErr := db.Save(activity).Error
+	if saveErr != nil {
+		return nil,&enums.ErrorInfo{Code:enums.ACTIVITY_UPDATE_ERR,Err:enums.ActivityUpdateStatusErr}
 	}
 
-	activity := &model.Activity{
-		Name:param.Name,
-		GiftId:param.GiftId,
-		Type:param.Type,
-		OpenAd:param.OpenAd,
-		FromType:model.ACTIVITY_FROM_USER,
-		LimitJoin:param.LimitJoin,
-		JoinLimitNum:param.JoinLimitNum,
-		ReceiveLimit:param.ReceiveLimit,
-		Des:param.Des,
-		Attachments:string(attachments),
-		ShareTitle:param.ShareTitle,
-		ShareImage:string(shareImage),
-		Status:model.ACTIVITY_STATSUS_TO_RELE,
-		Really:param.Really,
-		DrawType:param.DrawType,
-		BigPic:param.BigPic,
-	}
+	activityFormat := &model.ActivityPageFormat{}
+	activityFormat.ID = activity.ID
+	activityFormat.Name = activity.Name
+	activityFormat.GiftId = activity.GiftId
+	activityFormat.Type = activity.Type
+	activityFormat.OpenAd = activity.OpenAd
+	activityFormat.FromType = int32(activity.FromType)
+	activityFormat.LimitJoin = activity.LimitJoin
+	activityFormat.JoinLimitNum = activity.JoinLimitNum
+	activityFormat.ReceiveLimit = activity.ReceiveLimit
+	activityFormat.Des = activity.Des
+	activityFormat.Attachments = activity.Attachments
+	activityFormat.ShareTitle = activity.ShareTitle
+	activityFormat.ShareImage = activity.ShareImage
+	activityFormat.Status = activity.Status
+	activityFormat.Really = activity.Really
+	activityFormat.DrawType = activity.DrawType
+	activityFormat.BigPic = activity.BigPic
 
-	_,err := FirstGiftById(db,activity.GiftId)
-	if err != nil {
-		return nil,err
-	}
-
+	return activityFormat,nil
 }

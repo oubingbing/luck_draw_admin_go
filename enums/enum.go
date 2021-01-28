@@ -52,6 +52,8 @@ const (
 	ACTIVITY_DELETE_ERR				= 2015		//活动删除失败
 	ACTIVITY_UPDATE_STATUS_ERR		= 2016		//活动状态更新错误
 	ACTIVITY_UPDATE_STATUS_BAD_ERR	= 2017		//活动状态更新状态不允许修改
+	ACTIVITY_NOT_FOUND				= 2018		//活动不存在
+	ACTIVITY_UPDATE_ERR				= 2019		//活动更新错误
 )
 
 //礼品相关 3000 ~ 3999

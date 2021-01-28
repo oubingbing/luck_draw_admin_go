@@ -158,3 +158,11 @@ func (activity *Activity) Down(db *gorm.DB,id interface{}) error {
 		Update(update).Error
 	return err
 }
+
+func (activity *Activity) FindById(db *gorm.DB,id interface{}) error {
+	err := db.Table(activity.TableName()).
+		Where("id = ?",id).
+		Where("deleted_at is null").
+		First(activity).Error
+	return err
+}

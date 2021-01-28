@@ -3,6 +3,7 @@ var date = formatDate(new Date());
 new Vue({
     el: '#app',
     data: {
+        operateTitle:"新建活动",
         cosClient:null,
         todayStr:date,
         height:tableHeight,
@@ -13,6 +14,7 @@ new Vue({
         activityList:[],
         gifts:[],
         activity:{
+            Id:'',
             name:"",
             type:3,
             gift_id:0,
@@ -72,8 +74,48 @@ new Vue({
         this.getGifts();
     },
     methods: {
-        update:function(id,status){
-
+        edit:function(row){
+            let activity = {
+                Id:row.ID,
+                name:row.Name,
+                type:row.Type,
+                gift_id:row.GiftId,
+                limit_join:row.LimitJoin,
+                join_limit_num:row.JoinLimitNum,
+                receive_limit:row.ReceiveLimit,
+                des:row.Des,
+                attachments:row.Attachments,
+                share_title:row.ShareTitle,
+                share_image:row.ShareImage,
+                big_pic:row.BigPic,
+                draw_type:row.DrawType,
+                really:row.Really,
+                open_ad:row.OpenAd
+            }
+            this.activity = activity
+            this.createActivity = true
+            this.operateTitle = "编辑活动"
+        },
+        update:function(){
+            var url = "/admin/api/activity/update";
+            axios.put(url,this.activity).then( response=> {
+                var res = response.data;
+                if (res.code != 0){
+                    this.$message.error(res.msg);
+                }else{
+                    this.$message.success(res.msg);
+                    let activityList = this.activityList
+                    activityList = activityList.map(item=>{
+                        if (item.ID == row.ID){
+                            item = res.data
+                        }
+                        return item
+                    })
+                    this.activityList = activityList
+                }
+            }).catch(error => {
+                this.$message.error("请求异常");
+            });
         },
         //上架活动
         upActivity:function(id,status){
@@ -178,6 +220,15 @@ new Vue({
                 })
                 .catch(_ => {});
         },
+
+        submit:function(){
+            if (this.operateTitle == "新建活动"){
+                this.submitActivity()
+            }else{
+                this.update()
+            }
+        },
+
         //提交数据
         submitActivity(){
             var url = "/admin/api/activity/create";

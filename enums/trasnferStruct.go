@@ -31,6 +31,7 @@ type ActivityCreateParam struct {
 
 //活动更新参数
 type ActivityUpdateParam struct {
+	Id    			uint		`form:"id" json:"id" binding:"required"`
 	Name 			string 		`form:"name" json:"name" binding:"required"`
 	GiftId 			int64 		`form:"gift_id" json:"gift_id" binding:"required"`
 	Type 			int8 		`form:"type" json:"type" binding:"required"`						//活动类型
@@ -39,9 +40,9 @@ type ActivityUpdateParam struct {
 	JoinLimitNum 	float32 	`form:"join_limit_num" json:"join_limit_num" binding:"required"` 	//限制参加人数
 	ReceiveLimit 	float32 	`form:"receive_limit" json:"receive_limit" binding:"required"` 		//每人限领数量
 	Des 			string      `form:"des" json:"des" `
-	Attachments 	[]string   	`form:"attachments" json:"attachments" binding:"required"`
+	Attachments 	string   	`form:"attachments" json:"attachments" binding:"required"`
 	ShareTitle 		string    	`form:"share_title" json:"share_title"` 							//分享标题
-	ShareImage 		[]string    `form:"share_image" json:"share_image"` 							//分享图片
+	ShareImage 		string    `form:"share_image" json:"share_image"` 							//分享图片
 	BigPic 		    int8    	`form:"big_pic" json:"big_pic"`										//大图小图
 	DrawType 		int8    	`form:"draw_type" json:"draw_type"`									//抽奖方式
 	Really 		    int8    	`form:"really" json:"really"`										//是否真送
