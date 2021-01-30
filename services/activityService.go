@@ -6,6 +6,8 @@ import (
 	"luck-admin/enums"
 	model "luck-admin/models"
 	"luck-admin/util"
+	"math/rand"
+	"time"
 )
 
 func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.ErrorInfo) {
@@ -41,12 +43,35 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 		BigPic:param.BigPic,
 	}
 
-	_,err := FirstGiftById(db,activity.GiftId)
+	gift,err := FirstGiftById(db,activity.GiftId)
 	if err != nil {
 		return 0,err
 	}
 
+	//判断是否真送，假送就生成假送数据
+	var fakerUserIndex []int
+	//redisClient := util.Redis()
+	if param.Really == model.ACTIVITY_REALLY_N {
+		for {
+			if gift.Num <= 0 {
+				break
+			}
+			//生成假用户数据
+			rand.Seed(time.Now().UnixNano()+int64(gift.Num))
+			key := rand.Intn(int(activity.JoinLimitNum))
+			fakerUserIndex = append(fakerUserIndex, key)
+		}
+	}
+
 	effect,saveErr := activity.Store(db)
+
+	/*if len(fakerUserIndex)  > 0{
+		ctx := context.Background()
+		cacheKey := model.FAKER_USER_KEY+"_"+string(activity.ID)
+		fakerCacheStr,_ := json.Marshal(&fakerUserIndex)
+		redisClient.Set(ctx,cacheKey,fakerCacheStr,time.Duration(-1))
+	}*/
+
 	return effect,&enums.ErrorInfo{saveErr,enums.ACTIVITY_SAVE_ERR}
 }
 

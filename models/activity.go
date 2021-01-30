@@ -60,6 +60,9 @@ const (
 	ACTIVITY_OP_AD_N 			= 0
 )
 
+//假用户redis key
+const FAKER_USER_KEY = "luck_draw_faker_activity"
+
 type Activity struct {
 	gorm.Model
 	Name 			string 		`gorm:"column:name"`
