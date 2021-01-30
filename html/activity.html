@@ -71,10 +71,10 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                    <el-form-item label="限制人数" prop="join_limit_num">
+                    <el-form-item label="限制参与人数" prop="join_limit_num">
                         <el-input v-model="activity.join_limit_num"></el-input>
                     </el-form-item>
-                    <el-form-item label="限领数量" prop="receive_limit">
+                    <el-form-item label="限定中奖人数" prop="receive_limit">
                         <el-input v-model="activity.receive_limit"></el-input>
                     </el-form-item>
                     <el-form-item label="活动描述">
@@ -135,7 +135,7 @@
         <el-table-column prop="JoinLimitNum"  label="限制参加人数"     width="100"></el-table-column>
         <el-table-column prop="JoinNum"       label="参与人数"         width="100"></el-table-column>
         <el-table-column prop="StatusStr"     label="状态"          width="100"></el-table-column>
-        <el-table-column prop="ReceiveLimit"  label="每人限领"          width="100"></el-table-column>
+        <el-table-column prop="ReceiveLimit"  label="限定中奖人数"          width="100"></el-table-column>
         <el-table-column prop="OpenAdStr"     label="是否开启广告"    width="150"></el-table-column>
         <el-table-column prop="DrawTypeStr"   label="抽奖类型"        width="100"></el-table-column>
         <el-table-column prop="ReallyStr"     label="是否真送"        width="150"></el-table-column>

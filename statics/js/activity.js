@@ -248,8 +248,9 @@ new Vue({
                 return false
             }
 
+            this.activity.receive_limit = parseInt(this.activity.receive_limit)
             if (this.activity.receive_limit <= 0){
-                this.$message.error("限领取人数不能为空或者小于等于0");
+                this.$message.error("中奖人数不能为空或者小于等于0");
                 return false
             }
 
