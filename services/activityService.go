@@ -55,17 +55,19 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 	var fakerUserIndex []int
 	redisClient := util.Redis()
 	defer redisClient.Close()
+
+	fakerNUm := activity.ReceiveLimit
 	if param.Really == model.ACTIVITY_REALLY_N {
 		for {
-			if activity.ReceiveLimit <= 0 {
+			if fakerNUm <= 0 {
 				break
 			}
 			//生成假用户数据
-			rand.Seed(time.Now().UnixNano()+int64(activity.ReceiveLimit))
+			rand.Seed(time.Now().UnixNano()+int64(fakerNUm))
 			key := rand.Intn(int(activity.JoinLimitNum))
 			fakerUserIndex = append(fakerUserIndex, key)
 
-			activity.ReceiveLimit --
+			fakerNUm --
 		}
 	}
 
