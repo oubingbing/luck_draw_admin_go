@@ -65,9 +65,15 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 			//生成假用户数据
 			rand.Seed(time.Now().UnixNano()+int64(fakerNUm))
 			key := rand.Intn(int(activity.JoinLimitNum))
-			fakerUserIndex = append(fakerUserIndex, key)
+			if key == 0 {
+				key = 1
+			}
 
-			fakerNUm --
+			//保证假人能排入队伍
+			if key > 0 && key <= int(activity.JoinLimitNum) - 2 {
+				fakerUserIndex = append(fakerUserIndex, key)
+				fakerNUm --
+			}
 		}
 	}
 
