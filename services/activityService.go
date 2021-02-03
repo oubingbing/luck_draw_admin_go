@@ -27,6 +27,13 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 		}
 	}
 
+	countActivity := &model.Activity{}
+	count,countErr := countActivity.CountToday(db)
+	if countErr != nil {
+		return 0,&enums.ErrorInfo{Code:enums.ACTIVITY_COUNT_TODAY_ERR,Err:enums.ActivityAcountTodayErr}
+	}
+	number := time.Now().Format(enums.DAY_FORMAT)+fmt.Sprintf("_%v",(count+1))
+
 	activity := &model.Activity{
 		Name:param.Name,
 		GiftId:param.GiftId,
@@ -44,6 +51,8 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 		Really:param.Really,
 		DrawType:param.DrawType,
 		BigPic:param.BigPic,
+		Number:number,
+		IsTop:param.IsTop,
 	}
 
 	_,err := FirstGiftById(db,activity.GiftId)
@@ -79,15 +88,40 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 
 	effect,saveErr := activity.Store(db)
 
+	ctx := context.Background()
 	if len(fakerUserIndex)  > 0{
-		ctx := context.Background()
 		cacheKey := fmt.Sprintf("%v:%v",model.FAKER_USER_KEY,activity.ID)
 		sort.Ints(fakerUserIndex)
 		fakerCacheStr,_ := json.Marshal(&fakerUserIndex)
 		redisClient.Set(ctx,cacheKey,fakerCacheStr,0)
 	}
 
+	if param.IsTop == model.ACTIVITY_IS_TOP_Y {
+		refreshErr := RefreshTopActivity(db)
+		if refreshErr != nil {
+			return effect,refreshErr
+		}
+	}
+
 	return effect,&enums.ErrorInfo{saveErr,enums.ACTIVITY_SAVE_ERR}
+}
+
+func RefreshTopActivity(db *gorm.DB) *enums.ErrorInfo {
+	redisClient := util.Redis()
+	defer redisClient.Close()
+
+	topActivity := &model.Activity{}
+	tops,topErr := topActivity.Tops(db)
+	if topErr != nil {
+		return &enums.ErrorInfo{enums.ActivityQueryTopErr,enums.ACTIVITY_QUERY_TOP_ERR}
+	}
+	topsByte,encodeErr := json.Marshal(&tops)
+	if encodeErr != nil {
+		return &enums.ErrorInfo{enums.DecodeErr,enums.DECODE_ARR_ERR}
+	}
+	redisClient.Set(ctx,model.TOP_ACTIVITY,string(topsByte),0)
+
+	return nil
 }
 
 func ActivityPage(db *gorm.DB,page *model.PageParam) (model.AcPage,*enums.ErrorInfo) {
@@ -211,6 +245,11 @@ func ActivityDelete(db *gorm.DB,id uint) *enums.ErrorInfo {
 		return &enums.ErrorInfo{enums.ActivityDeleteErr,enums.ACTIVITY_DELETE_ERR}
 	}
 
+	refreshErr := RefreshTopActivity(db)
+	if refreshErr != nil {
+		return refreshErr
+	}
+
 	return nil
 }
 
@@ -230,6 +269,14 @@ func ActivityUpdateStatus(db *gorm.DB,id interface{},status interface{}) *enums.
 
 	if err != nil {
 		return &enums.ErrorInfo{enums.ActivityUpdateStatusErr,enums.ACTIVITY_UPDATE_STATUS_BAD_ERR}
+	}
+
+	err = activity.FindById(db,id)
+	if activity.IsTop == model.ACTIVITY_IS_TOP_Y {
+		refreshErr := RefreshTopActivity(db)
+		if refreshErr != nil {
+			return refreshErr
+		}
 	}
 
 	return nil
@@ -268,6 +315,13 @@ func ActivityUpdate(db *gorm.DB,param *enums.ActivityUpdateParam) (*model.Activi
 	_,findGiftErr := FirstGiftById(db,activity.GiftId)
 	if findGiftErr != nil {
 		return nil,&enums.ErrorInfo{Code:enums.GIFT_GET_DETAIL_ERR,Err:enums.GiftNotFound}
+	}
+
+	if activity.IsTop == model.ACTIVITY_IS_TOP_Y {
+		refreshErr := RefreshTopActivity(db)
+		if refreshErr != nil {
+			return nil,refreshErr
+		}
 	}
 
 	/*attachments,encodeErr := json.Marshal(param.Attachments)

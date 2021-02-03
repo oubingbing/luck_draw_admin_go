@@ -1,5 +1,11 @@
 package enums
 
+const (
+	DAY_FORMAT				= "20060102"
+    DATE_ONLY_FORMAT  		= "2006-01-02 00:00:00"
+ 	DATE_FORMAT  			= "2006-01-02 15:04:05"
+)
+
 //业务不相关错误
 const (
 	SUCCESS					= 0
@@ -54,6 +60,8 @@ const (
 	ACTIVITY_UPDATE_STATUS_BAD_ERR	= 2017		//活动状态更新状态不允许修改
 	ACTIVITY_NOT_FOUND				= 2018		//活动不存在
 	ACTIVITY_UPDATE_ERR				= 2019		//活动更新错误
+	ACTIVITY_COUNT_TODAY_ERR		= 2020		//活动count今天活动发生错误
+	ACTIVITY_QUERY_TOP_ERR   		= 2021		//活动查询置顶出错
 )
 
 //礼品相关 3000 ~ 3999

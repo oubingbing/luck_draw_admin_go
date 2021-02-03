@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"luck-admin/enums"
+	"time"
 )
 
 //活动类型，1=红包，2=商品，3=话费
@@ -60,8 +61,15 @@ const (
 	ACTIVITY_OP_AD_N 			= 0
 )
 
+//是否置顶，0=否，1=是
+const (
+	ACTIVITY_IS_TOP_Y 			= 1
+	ACTIVITY_IS_TOP_N 			= 0
+)
+
 //假用户redis key
 const FAKER_USER_KEY = "luck_draw_faker_activity"
+const TOP_ACTIVITY 	 = "luck_draw_top_activity"
 
 type Activity struct {
 	gorm.Model
@@ -79,19 +87,34 @@ type Activity struct {
 	Status 			int8		`gorm:"column:status"` 			//活动状态
 	ShareTitle 		string    	`gorm:"column:share_title"` 	//分享标题
 	ShareImage 		string    	`gorm:"column:share_image"` 	//分享图片
-	DrawType 		int8    	`gorm:"column:draw_type"`
-	Really 			int8    	`gorm:"column:really"`
-	Consume			float32		`gorm:"column:consume"`
-	BigPic 			int8    	`gorm:"column:big_pic"`
+	DrawType 		int8    	`gorm:"column:draw_type"`		//抽奖方式
+	Really 			int8    	`gorm:"column:really"`			//是否真抽
+	Consume			float32		`gorm:"column:consume"`			//礼品消耗数
+	BigPic 			int8    	`gorm:"column:big_pic"`			//是否大图
+	IsTop 			int8    	`gorm:"column:is_top"`			//是否置顶
+	Number			string		`gorm:"column:number"`			//活动编号
 }
 
-
 type AcPage []ActivityPageFormat
+type AcTop []ActivityTop
 
 var pageErr error = errors.New("查询出错")
 
 func (Activity) TableName() string  {
 	return "activity"
+}
+
+func (activity *Activity) CountToday(db *gorm.DB) (int64,error) {
+	var num int64
+	err := db.Table(activity.TableName()).
+		//Set("gorm:query_option", "FOR UPDATE").
+		Not("status", []int8{JOIN_LOG_STATUS_FAIL,JOIN_LOG_STATUS_QUEUE}).
+		Where("created_at  >= ?",time.Now().Format(enums.DATE_ONLY_FORMAT)).
+		Where("created_at  <= ?",time.Now().Format(enums.DATE_FORMAT)).
+		Where("deleted_at is null").
+		Count(&num).Error
+
+	return num,err
 }
 
 func (activity *Activity)Store(db *gorm.DB) (int64,error) {
@@ -168,4 +191,16 @@ func (activity *Activity) FindById(db *gorm.DB,id interface{}) error {
 		Where("deleted_at is null").
 		First(activity).Error
 	return err
+}
+
+func (activity *Activity) Tops(db *gorm.DB) (AcTop,error) {
+	var activities AcTop
+	err :=  db.Table(activity.TableName()).
+		Select("id,name,is_top,number,gift_id,type,from_type,join_num,attachments,join_limit_num,status,created_at").
+		Where("deleted_at is null").
+		Where("is_top = ?",ACTIVITY_IS_TOP_Y).
+		Where("status in (?)",[]int8{ACTIVITY_STATSUS_RUNNING}).
+		Order("id desc").
+		Find(&activities).Error
+	return activities,err
 }

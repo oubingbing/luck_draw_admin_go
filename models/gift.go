@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/jinzhu/gorm"
 	"luck-admin/enums"
+	"time"
 )
 
 //奖品类型，1=红包，2=商品，3=话费
@@ -67,6 +68,24 @@ type ActivityPageFormat struct {
 	Consume			float32
 	BigPic 			int8
 	BigPicStr 		string
+}
+
+type ActivityTop struct {
+	ID        		uint
+	Name 			string
+	GiftId 			int64
+	Type 			int8   		 	//活动类型
+	FromType 		int32   		 //发布活动的用户类型
+	JoinNum 		int32 		   	//已参加人数
+	JoinLimitNum 	float32 	 	//限制参加人数
+	Attachments 	string
+	AttachmentsSli 	[]string
+	Status 			int8		 	//活动状态
+	Gift			*Gift
+	New				int
+	CreatedAt		*time.Time
+	IsTop			int8
+	Number 			string
 }
 
 type GiftEnable struct {

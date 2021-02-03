@@ -28,7 +28,8 @@ new Vue({
             big_pic:2,
             draw_type:1,
             really:0,
-            open_ad:1
+            open_ad:1,
+            is_top:0
         },
         initActivity: {
             name:"",
@@ -44,7 +45,8 @@ new Vue({
             big_pic:2,
             draw_type:1,
             really:0,
-            open_ad:1
+            open_ad:1,
+            is_top:0
         },
         cos:{
             token:"",
@@ -90,7 +92,8 @@ new Vue({
                 big_pic:row.BigPic,
                 draw_type:row.DrawType,
                 really:row.Really,
-                open_ad:row.OpenAd
+                open_ad:row.OpenAd,
+                is_top:row.IsTop
             }
             this.activity = activity
             this.createActivity = true

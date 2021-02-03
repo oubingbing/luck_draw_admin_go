@@ -27,6 +27,7 @@ type ActivityCreateParam struct {
 	BigPic 		    int8    	`form:"big_pic" json:"big_pic"`										//大图小图
 	DrawType 		int8    	`form:"draw_type" json:"draw_type"`									//抽奖方式
 	Really 		    int8    	`form:"really" json:"really"`										//是否真送
+	IsTop 		    int8    	`form:"is_top" json:"is_top"`										//是否置顶
 }
 
 //活动更新参数

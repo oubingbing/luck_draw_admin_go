@@ -59,6 +59,12 @@
                             <el-radio :label="0">否</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="是否置顶" prop="is_top">
+                        <el-radio-group v-model="activity.is_top">
+                            <el-radio :label="1">是</el-radio>
+                            <el-radio :label="0">否</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
                     <el-form-item label="布局" prop="big_pic">
                         <el-radio-group v-model="activity.big_pic">
                             <el-radio :label="1">大图</el-radio>

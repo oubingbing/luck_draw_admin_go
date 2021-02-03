@@ -62,6 +62,8 @@ var (
  	ActivityEncodeImageErr  error 		= errors.New("图片转化失败")
  	ActivityDeleteErr					= errors.New("活动删除失败")
  	ActivityUpdateStatusErr				= errors.New("活动状态更新错误")
+ 	ActivityAcountTodayErr				= errors.New("统计今天活动数量发生错误")
+ 	ActivityQueryTopErr					= errors.New("活动查询置顶出错")
 )
 
 //公共错误
