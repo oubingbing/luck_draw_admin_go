@@ -8,7 +8,7 @@ new Vue({
         todayStr:date,
         height:tableHeight,
         total:0,
-        page_size:10,
+        page_size:20,
         current_page:1,
         createActivity:false,
         activityList:[],

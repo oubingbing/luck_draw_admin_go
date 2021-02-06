@@ -129,7 +129,7 @@
         </el-row>
     </el-dialog>
     <br>
-    <el-table :data="activityList" v-bind:style="{ width: '100%', height:  height+ 'px' }">
+    <el-table :data="activityList" :height="height">
         <el-table-column prop="Name"          label="活动名称"        width="200" fixed></el-table-column>
         <el-table-column prop="TypeStr"       label="活动类型"        width="100"></el-table-column>
         <el-table-column prop="Attachments[0]" label="活动图片"       width="150">
