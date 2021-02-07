@@ -16,7 +16,7 @@ new Vue({
         activity:{
             Id:'',
             name:"",
-            type:3,
+            type:1,
             gift_id:0,
             limit_join:0,
             join_limit_num:1,
@@ -33,7 +33,7 @@ new Vue({
         },
         initActivity: {
             name:"",
-            type:3,
+            type:1,
             gift_id:0,
             limit_join:0,
             join_limit_num:1,
@@ -45,7 +45,7 @@ new Vue({
             big_pic:2,
             draw_type:1,
             really:0,
-            open_ad:1,
+            open_ad:0,
             is_top:0
         },
         cos:{
