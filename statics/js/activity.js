@@ -28,7 +28,7 @@ new Vue({
             big_pic:2,
             draw_type:1,
             really:0,
-            open_ad:1,
+            open_ad:0,
             is_top:0
         },
         initActivity: {
