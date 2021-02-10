@@ -36,7 +36,7 @@ const (
 
 )
 
-//抽奖方式，1=平均，2=拼手气，拼手气人人有份
+//抽奖方式，1=平均，2=拼手气，20%中奖
 const (
 	ACTIVITY_DRAW_TYPE_AVERAGE  = 1
 	ACTIVITY_DRAW_TYPE_RAND     = 2

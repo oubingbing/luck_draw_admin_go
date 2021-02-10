@@ -65,7 +65,13 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 	redisClient := util.Redis()
 	defer redisClient.Close()
 
-	fakerNUm := activity.ReceiveLimit
+	var fakerNUm float32
+	if param.DrawType == model.ACTIVITY_DRAW_TYPE_RAND_all {
+		fakerNUm = activity.JoinLimitNum * 0.16
+	}else{
+		fakerNUm = activity.ReceiveLimit
+	}
+
 	if param.Really == model.ACTIVITY_REALLY_N {
 		for {
 			if fakerNUm <= 0 {
