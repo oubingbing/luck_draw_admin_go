@@ -68,6 +68,8 @@ func SaveActivity(db *gorm.DB,param *enums.ActivityCreateParam) (int64,*enums.Er
 	var fakerNUm float32
 	if param.DrawType == model.ACTIVITY_DRAW_TYPE_RAND_all {
 		fakerNUm = activity.JoinLimitNum * 0.16
+	}else if param.DrawType == model.ACTIVITY_DRAW_TYPE_TIME {
+		fakerNUm = 18
 	}else{
 		fakerNUm = activity.ReceiveLimit
 	}

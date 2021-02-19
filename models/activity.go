@@ -36,11 +36,12 @@ const (
 
 )
 
-//抽奖方式，1=平均，2=拼手气，20%中奖
+//抽奖方式，1=平均，2=拼手气，20%中奖,4=定时
 const (
 	ACTIVITY_DRAW_TYPE_AVERAGE  = 1
 	ACTIVITY_DRAW_TYPE_RAND     = 2
 	ACTIVITY_DRAW_TYPE_RAND_all = 3
+	ACTIVITY_DRAW_TYPE_TIME		= 4
 )
 
 //是否真的送奖品，0=否，1=是 really
